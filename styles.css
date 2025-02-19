@@ -59,13 +59,40 @@ body {
   font-weight: 700;
 }
 
+.player-score::before {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  width: 100px;
+  font-size: 12px;
+  transform: translateX(-50%);
+}
+
+.player-score {
+  position: relative;
+  display: inline-block;
+}
+
+.player-score.invalid,
+.player-score.processing {
+  color: #e91e63;
+}
+
+.player-score.invalid::before {
+  content: "Not a valid word!";
+}
+
+.player-score.processing::before {
+  content: "Validating...";
+}
+
 .progress-bar {
   width: 400px;
   height: 1rem;
   background-color: #fff;
 }
 
-.word-assmbly,
+.word-assembly,
 .letter-generator {
   display: flex;
   align-items: center;
@@ -79,39 +106,39 @@ body {
   padding: 10px;
 }
 
-.word-assmbly .slot-wrapper {
+.word-assembly .slot-wrapper {
   padding: 10px;
   background-color: #8f5f7e;
   width: 100%;
   height: 100%;
 }
 
-.word-assmbly .slot {
+.word-assembly .slot {
   background-color: #fff;
 }
 
-.word-assmbly .slot[data-boost-by] {
+.word-assembly .slot[data-boost-by] {
   border: 2px solid #333;
   height: 174px;
   padding: 30px 7px;
 }
 
-.word-assmbly .slot[data-boost-by]::before {
+.word-assembly .slot[data-boost-by]::before {
   position: absolute;
   left: 0;
   right: 0;
   top: 5px;
 }
 
-.word-assmbly .slot[data-boost-by="2"]::before {
+.word-assembly .slot[data-boost-by="2"]::before {
   content: "DOUBLE";
 }
 
-.word-assmbly .slot[data-boost-by="3"]::before {
+.word-assembly .slot[data-boost-by="3"]::before {
   content: "TRIPLE";
 }
 
-.word-assmbly .slot[data-boost-by]::after {
+.word-assembly .slot[data-boost-by]::after {
   content: "LETTER";
   position: absolute;
   left: 0;
@@ -124,7 +151,7 @@ body {
   background-color: #8f5f7e;
 }
 
-.letter {
+.letter-wrapper {
   position: relative;
   width: 100%;
   height: 100%;
@@ -135,9 +162,18 @@ body {
   color: #fff;
   font-size: 54px;
   font-weight: 700;
+  cursor: grab;
 }
 
-.letter .point {
+.letter-wrapper:active {
+  cursor: grabbing;
+}
+
+.word-assembly .letter-wrapper {
+  cursor: initial;
+}
+
+.letter-wrapper .point {
   position: absolute;
   font-size: 10px;
   bottom: 10px;
@@ -190,17 +226,17 @@ body {
   .slot {
     height: 110px;
   }
-  .letter {
+  .letter-wrapper {
     font-size: 44px;
   }
-  .word-assmbly .slot[data-boost-by] {
+  .word-assembly .slot[data-boost-by] {
     height: 156px;
   }
-  .word-assmbly .slot[data-boost-by]::before,
-  .word-assmbly .slot[data-boost-by]::after {
+  .word-assembly .slot[data-boost-by]::before,
+  .word-assembly .slot[data-boost-by]::after {
     font-size: 12px;
   }
-  .word-assmbly,
+  .word-assembly,
   .letter-generator {
     margin-bottom: 2rem;
   }
@@ -218,7 +254,7 @@ body {
   .scores {
     margin: 3rem auto;
   }
-  .word-assmbly,
+  .word-assembly,
   .letter-generator {
     margin-bottom: 3rem;
   }
@@ -240,25 +276,25 @@ body {
     height: 70px;
     padding: 5px;
   }
-  .word-assmbly .slot-wrapper {
+  .word-assembly .slot-wrapper {
     padding: 5px;
   }
   .letter-generator .slot {
     border-width: 5px;
   }
-  .letter {
+  .letter-wrapper {
     font-size: 34px;
   }
-  .letter .point {
+  .letter-wrapper .point {
     bottom: 2px;
     right: 2px;
   }
-  .word-assmbly .slot[data-boost-by] {
+  .word-assembly .slot[data-boost-by] {
     height: 104px;
     padding: 20px 5px;
   }
-  .word-assmbly .slot[data-boost-by]::before,
-  .word-assmbly .slot[data-boost-by]::after {
+  .word-assembly .slot[data-boost-by]::before,
+  .word-assembly .slot[data-boost-by]::after {
     font-size: 10px;
   }
   .progress-bar {
@@ -269,7 +305,7 @@ body {
     font-size: 30px;
     margin: 2rem auto;
   }
-  .word-assmbly,
+  .word-assembly,
   .letter-generator {
     margin-bottom: 2.5rem;
   }
@@ -297,29 +333,29 @@ body {
   .slot {
     height: 50px;
   }
-  .word-assmbly .slot[data-boost-by] {
+  .word-assembly .slot[data-boost-by] {
     height: 78px;
     padding: 16px 3px;
   }
-  .word-assmbly .slot[data-boost-by]::before,
-  .word-assmbly .slot[data-boost-by]::after {
+  .word-assembly .slot[data-boost-by]::before,
+  .word-assembly .slot[data-boost-by]::after {
     font-size: 7px;
   }
-  .word-assmbly .slot[data-boost-by]::before {
+  .word-assembly .slot[data-boost-by]::before {
     top: 4px;
   }
-  .word-assmbly .slot[data-boost-by]::after {
+  .word-assembly .slot[data-boost-by]::after {
     bottom: 4px;
   }
-  .letter {
+  .letter-wrapper {
     font-size: 20px;
     align-items: flex-start;
   }
-  .letter .point {
+  .letter-wrapper .point {
     bottom: 1px;
     right: 1px;
   }
-  .word-assmbly,
+  .word-assembly,
   .letter-generator {
     margin-bottom: 1rem;
   }
