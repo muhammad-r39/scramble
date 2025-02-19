@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SCRAMBLE | Word Game</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <div class="headline">
+          <h1>SCRAMBLE</h1>
+          <p>Find today’s highest point word</p>
+        </div>
+        <div class="scores">
+          <span class="player-score">0</span>
+          <span class="progress-bar"></span>
+          <span class="highest-score">0</span>
+        </div>
+        <div class="word-assmbly">
+          <div class="slot" data-slot-id="1">
+            <div class="slot-wrapper"></div>
+          </div>
+          <div class="slot" data-slot-id="2">
+            <div class="slot-wrapper"></div>
+          </div>
+          <div class="slot" data-slot-id="3" data-boost-by="3">
+            <div class="slot-wrapper">
+              <div class="letter">D<span class="point">2</span></div>
+            </div>
+          </div>
+          <div class="slot" data-slot-id="4">
+            <div class="slot-wrapper"></div>
+          </div>
+          <div class="slot" data-slot-id="5">
+            <div class="slot-wrapper"></div>
+          </div>
+          <div class="slot" data-slot-id="6">
+            <div class="slot-wrapper"></div>
+          </div>
+          <div class="slot" data-slot-id="7">
+            <div class="slot-wrapper"></div>
+          </div>
+        </div>
+        <div class="letter-generator">
+          <div class="slot" data-slot-id="1">
+            <div class="letter">D<span class="point">2</span></div>
+          </div>
+          <div class="slot" data-slot-id="2"></div>
+          <div class="slot" data-slot-id="3"></div>
+          <div class="slot" data-slot-id="4"></div>
+          <div class="slot" data-slot-id="5"></div>
+          <div class="slot" data-slot-id="6"></div>
+          <div class="slot" data-slot-id="7"></div>
+        </div>
+        <div class="action">
+          <button id="shuffle">SHUFFLE</button>
+          <button id="recall">RECALL</button>
+        </div>
+        <div class="timer">TIMER: <span class="time-count">00</span></div>
+      </div>
+    </main>
+    <div class="add-space">Ad space</div>
+    <script src="./game.js"></script>
+  </body>
+</html>
