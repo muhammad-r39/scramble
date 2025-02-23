@@ -26,6 +26,9 @@ body {
   font-family: "CanvaSans", sans-serif;
   background-color: #ffc8ea;
   color: #000;
+}
+
+main {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -194,6 +197,7 @@ body {
   background-color: #ffffff;
   padding: 15px;
   border: none;
+  cursor: pointer;
 }
 
 .timer {
@@ -203,11 +207,157 @@ body {
 }
 
 .add-space {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 80px;
   background-color: #fff;
+  margin: 0 0 1.5rem;
+}
+
+.top-players h2 {
+  margin: 0 0 1.5rem;
+  text-transform: uppercase;
+}
+
+.top-players table {
+  width: 600px;
+  max-width: 100%;
+  margin: auto;
+}
+
+.top-players tr,
+.top-players th,
+.top-players td {
+  border: 1px solid #fff;
+  padding: 5px;
+}
+
+.top-players th {
+  font-weight: 700;
+}
+
+.top-players .name {
+  width: 70%;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.top-players tr td:nth-child(2) {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.cta {
+  padding: 1.5rem 0 0;
+  text-align: center;
+}
+
+.btn-join {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.top-player-message {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  background-color: rgb(0 0 0 / 0.7);
+  padding: 10% 1.5rem 0;
+}
+
+.modal .container {
+  width: 400px;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.modal h2 {
+  margin: 0 0 1.5rem;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  color: #fff;
+}
+
+.modal .form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.modal .form-col {
+  flex: 1;
+}
+
+.modal input {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 0.25rem;
+  background-color: #d4d4d4;
+  color: #000;
+  font-size: 1.125rem;
+}
+
+.modal input:focus {
+  outline: none;
+}
+
+.modal input[type="submit"] {
+  background-color: #8f5f7e;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.login-link {
+  font-size: 14px;
+  padding: 10px 0 0px;
+}
+
+.btn-link {
+  text-decoration: underline;
+  color: #8f5f7e;
+  cursor: pointer;
+}
+
+.close-modal {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  line-height: 1;
+  color: #8f5f7e;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 1200px) {
@@ -272,6 +422,10 @@ body {
   .container {
     padding: 30px 20px;
   }
+  .letter-generator {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .slot {
     height: 70px;
     padding: 5px;
@@ -280,6 +434,8 @@ body {
     padding: 5px;
   }
   .letter-generator .slot {
+    width: 70px;
+    height: 70px;
     border-width: 5px;
   }
   .letter-wrapper {
@@ -307,7 +463,7 @@ body {
   }
   .word-assembly,
   .letter-generator {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1rem;
   }
   .timer {
     font-size: 20px;
@@ -316,9 +472,13 @@ body {
   .action {
     margin-top: 3rem;
     margin-bottom: 2.2rem;
+    gap: 2rem;
   }
   .action button {
     padding: 10px 15px;
+  }
+  .modal .form-row {
+    flex-direction: column;
   }
 }
 
@@ -332,6 +492,11 @@ body {
   }
   .slot {
     height: 50px;
+  }
+  .letter-generator .slot {
+    width: 60px;
+    height: 60px;
+    border-width: 5px;
   }
   .word-assembly .slot[data-boost-by] {
     height: 78px;
@@ -355,13 +520,16 @@ body {
     bottom: 1px;
     right: 1px;
   }
+  .letter-generator .letter-wrapper {
+    font-size: 28px;
+  }
   .word-assembly,
   .letter-generator {
     margin-bottom: 1rem;
   }
   .action {
     margin-top: 2rem;
-    gap: 2rem;
+    gap: 1rem;
   }
   .action button {
     font-size: 12px;
