@@ -102,6 +102,7 @@ function addDropEvent() {
 }
 
 function displayLetters() {
+  window.game.letters.sort(() => Math.random() - 0.5);
   const letterSlots = document.querySelectorAll(".letter-generator .slot");
   letterSlots.forEach((slot, index) => {
     const letter = game.letters[index];

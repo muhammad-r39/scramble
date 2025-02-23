@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("You need to recall first.");
       return;
     }
-    window.game.letters.sort(() => Math.random() - 0.5);
     displayLetters();
   });
 
