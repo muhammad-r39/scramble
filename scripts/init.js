@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function getGameInitData() {
     const game = {
       boost: { slot: 2, by: 3 },
-      highScore: 40,
+      highScore: 17,
       letters: ["A", "C", "C", "O", "U", "N", "T"],
       points: {
         A: 1,

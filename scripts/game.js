@@ -1,6 +1,7 @@
 let currentWord = "";
 
 async function validateWord() {
+  const scores = document.querySelector(".scores");
   const playerScore = document.querySelector(".player-score");
 
   if (!playerScore) {
@@ -11,7 +12,7 @@ async function validateWord() {
     return false;
   }
 
-  playerScore.classList.add("processing");
+  scores.classList.add("processing");
   await new Promise((resolve) => setTimeout(resolve, 0));
 
   try {
@@ -29,24 +30,31 @@ async function validateWord() {
     console.error("Error validating word:", error);
     return false;
   } finally {
-    playerScore.classList.remove("processing");
+    scores.classList.remove("processing");
   }
 }
 
 async function updatePlayerScore(score = playerScore) {
+  const scores = document.querySelector(".scores");
   const playerScore = document.querySelector(".player-score");
-  playerScore.textContent = score;
+  const progress = document.querySelector(".progress-bar .progress");
 
   if (score > 0) {
-    playerScore.classList.add("invalid");
+    scores.classList.add("invalid");
     if (await validateWord()) {
-      playerScore.classList.remove("invalid");
+      scores.classList.remove("invalid");
     } else {
-      playerScore.classList.add("invalid");
+      scores.classList.add("invalid");
     }
   } else {
-    playerScore.classList.remove("invalid");
+    scores.classList.remove("invalid");
   }
+
+  playerScore.textContent = score;
+
+  const progressPercent = (score * 100) / window.game.highScore;
+  console.log(progressPercent);
+  progress.style.width = `${progressPercent}%`;
 }
 
 // Calculate Points
@@ -69,6 +77,9 @@ function calculatePointsAndWord() {
     });
 }
 
+/*****************
+ * Player Actions
+ ****************/
 // Drag
 function addDragEvent(slot) {
   const letterWrapper = slot.querySelector(".letter-wrapper");
