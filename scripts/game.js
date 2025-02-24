@@ -72,16 +72,9 @@ function calculatePointsAndWord() {
 // Drag
 function addDragEvent(slot) {
   const letterWrapper = slot.querySelector(".letter-wrapper");
-
   // Desktop Dragging
   letterWrapper.addEventListener("dragstart", (e) => {
     e.dataTransfer.setData("text", e.target.getAttribute("data-letter-index"));
-  });
-
-  // Mobile Touch Dragging
-  letterWrapper.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    window.draggedElement = e.target.closest(".letter-wrapper");
   });
 }
 
@@ -89,31 +82,28 @@ function addDragEvent(slot) {
 function addDropEvent() {
   const wordAssembly = document.querySelector(".word-assembly");
 
-  wordAssembly.addEventListener("dragover", (e) => {
-    e.preventDefault();
-  });
+  wordAssembly.removeEventListener("dragover", handleDragOver);
+  wordAssembly.removeEventListener("drop", handleDrop);
 
-  wordAssembly.addEventListener("drop", (e) => {
-    e.preventDefault();
-    console.log("drop");
-    let draggedSlotId = e.dataTransfer.getData("text");
-    let draggedElement = document.querySelector(
-      `[data-letter-index='${draggedSlotId}']`
-    );
-
-    placeLetterInEmptySlot(draggedElement, "drop");
-  });
-
-  // Touch Drop Event
-  wordAssembly.addEventListener("touchend", (e) => {
-    console.log("touched");
-    if (window.draggedElement) {
-      placeLetterInEmptySlot(window.draggedElement, "touch");
-      window.draggedElement = null;
-    }
-  });
+  wordAssembly.addEventListener("dragover", handleDragOver);
+  wordAssembly.addEventListener("drop", handleDrop);
 }
 
+function handleDragOver(e) {
+  e.preventDefault();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  let draggedSlotId = e.dataTransfer.getData("text");
+  let draggedElement = document.querySelector(
+    `[data-letter-index='${draggedSlotId}']`
+  );
+
+  placeLetterInEmptySlot(draggedElement);
+}
+
+// Place Letter
 function placeLetterInEmptySlot(draggedElement) {
   let emptySlot = [
     ...document.querySelectorAll(".word-assembly .slot .slot-wrapper"),
@@ -125,12 +115,13 @@ function placeLetterInEmptySlot(draggedElement) {
   calculatePointsAndWord();
 }
 
+// Display Letters
 function displayLetters() {
   window.game.letters.sort(() => Math.random() - 0.5);
   const letterSlots = document.querySelectorAll(".letter-generator .slot");
 
   letterSlots.forEach((slot, index) => {
-    slot.innerHTML = ""; // Clear previous letters
+    slot.innerHTML = "";
     const letter = game.letters[index];
     const letterWrapper = document.createElement("div");
     letterWrapper.classList.add("letter-wrapper");
