@@ -158,7 +158,7 @@ main {
 }
 
 .word-assembly .slot[data-boost-by]::after {
-  content: "LETTER";
+  content: "POINT";
   position: absolute;
   left: 0;
   right: 0;
