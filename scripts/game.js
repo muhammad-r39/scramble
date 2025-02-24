@@ -72,10 +72,69 @@ function calculatePointsAndWord() {
 // Drag
 function addDragEvent(slot) {
   const letterWrapper = slot.querySelector(".letter-wrapper");
+
   // Desktop Dragging
   letterWrapper.addEventListener("dragstart", (e) => {
     e.dataTransfer.setData("text", e.target.getAttribute("data-letter-index"));
   });
+
+  // Mobile Touch Dragging
+  letterWrapper.addEventListener("touchstart", handleTouchStart);
+  letterWrapper.addEventListener("touchmove", handleTouchMove, {
+    passive: false,
+  });
+  letterWrapper.addEventListener("touchend", handleTouchEnd);
+}
+
+// Touch Drag Variables
+let activeDrag = null;
+let initialX = 0,
+  initialY = 0;
+
+function handleTouchStart(e) {
+  const touch = e.touches[0];
+  activeDrag = e.target.closest(".letter-wrapper");
+
+  if (activeDrag) {
+    initialX = touch.clientX;
+    initialY = touch.clientY;
+    activeDrag.style.position = "absolute";
+    activeDrag.style.zIndex = "1000";
+  }
+}
+
+function handleTouchMove(e) {
+  if (!activeDrag) return;
+
+  e.preventDefault(); // Prevent page from scrolling
+
+  const touch = e.touches[0];
+
+  // Move the dragged element with the touch
+  activeDrag.style.left = `${touch.clientX - initialX}px`;
+  activeDrag.style.top = `${touch.clientY - initialY}px`;
+}
+
+function handleTouchEnd(e) {
+  if (!activeDrag) return;
+
+  // Find nearest empty slot
+  let emptySlot = [
+    ...document.querySelectorAll(".word-assembly .slot .slot-wrapper"),
+  ].find((slot) => slot.children.length === 0);
+
+  if (emptySlot) {
+    emptySlot.appendChild(activeDrag);
+  }
+
+  // Reset styles
+  activeDrag.style.position = "";
+  activeDrag.style.zIndex = "";
+  activeDrag.style.left = "";
+  activeDrag.style.top = "";
+
+  activeDrag = null;
+  calculatePointsAndWord();
 }
 
 // Drop
