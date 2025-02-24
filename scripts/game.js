@@ -1,4 +1,5 @@
 let currentWord = "";
+let validScore = false;
 
 async function validateWord() {
   const scores = document.querySelector(".scores");
@@ -41,18 +42,26 @@ async function updatePlayerScore(score = playerScore) {
 
   if (score > 0) {
     scores.classList.add("invalid");
+    validScore = false;
     if (await validateWord()) {
       scores.classList.remove("invalid");
+      validScore = true;
     } else {
       scores.classList.add("invalid");
+      validScore = false;
     }
   } else {
     scores.classList.remove("invalid");
+    validScore = true;
   }
 
   playerScore.textContent = score;
   const progressPercent = (score * 100) / window.game.highScore;
   progress.style.width = `${progressPercent}%`;
+
+  if (validScore && score === window.game.highScore) {
+    sparkle();
+  }
 }
 
 // Calculate Points
@@ -207,3 +216,130 @@ function displayLetters() {
 
   addDropEvent();
 }
+
+// Start Timer
+let startTime = Date.now();
+let timerInterval = setInterval(updateTimer, 1000); // Store interval ID
+
+function updateTimer() {
+  let elapsed = Math.floor((Date.now() - startTime) / 1000);
+  let hours = Math.floor(elapsed / 3600);
+  let minutes = Math.floor((elapsed - hours * 3600) / 60);
+  let seconds = elapsed - hours * 3600 - minutes * 60;
+
+  let timeString =
+    hours.toString().padStart(2, "0") +
+    ":" +
+    minutes.toString().padStart(2, "0") +
+    ":" +
+    seconds.toString().padStart(2, "0");
+
+  document.querySelector(".time-count").textContent = timeString;
+}
+
+// Win function with sparkle effect
+function sparkle() {
+  clearInterval(timerInterval); // Stop the timer
+
+  const registerModal = document.querySelector("#registerModal");
+  const beatTime = document.querySelector(".time-count").textContent;
+
+  const win = document.createElement("div");
+  win.classList.add("sparkle-screen");
+
+  win.innerHTML = `
+    <div class="sparkle-container">
+      <h2>🎉 Congratulations! 🎉</h2>
+      <h3>You have found today's highest point word.</h3>
+      <p>Your beat time: <span class="beat-time">${beatTime}</span></p>
+      <p>Login or register to save your place among the top.</p>
+      <span class="btn-link btn-register">Register</span>
+    </div>
+  `;
+
+  document.querySelector("body").appendChild(win);
+
+  document.querySelectorAll(".btn-register").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (registerModal) {
+        registerModal.style.display = "block";
+      }
+    });
+  });
+
+  // Add sparkle effect
+  createSparkles();
+}
+
+// Sparkle effect function
+function createSparkles() {
+  const sparkleScreen = document.querySelector(".sparkle-screen");
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2;
+  for (let i = 0; i < 5; i++) {
+    let sparkle = document.createElement("span");
+    sparkle.innerHTML = `<img src="../assets/star${
+      Math.floor(Math.random() * 2) + 1
+    }.webp" alt="sparkle">`;
+    sparkle.classList.add("sparkle");
+    sparkleScreen.appendChild(sparkle);
+
+    // Random position
+    let x = centerX + (Math.random() - 0.5) * (window.innerWidth * 0.6);
+    let y = centerY + (Math.random() - 0.5) * (window.innerHeight * 0.6);
+
+    sparkle.style.left = `${x}px`;
+    sparkle.style.top = `${y}px`;
+
+    // Animate movement
+    let moveX = (Math.random() - 0.5) * 150;
+    let moveY = (Math.random() - 0.5) * 150;
+
+    sparkle.animate([
+      { transform: "translate(0, 0)", opacity: 1 },
+      { transform: `translate(${moveX}px, ${moveY}px)`, opacity: 0 },
+    ]);
+
+    if (!document.querySelector(".sparkle-bg")) {
+      let sparkleBg = document.createElement("span");
+      sparkleBg.innerHTML = `<img class="one" src="../assets/sparkle.png" alt="sparkle">
+                            <img class="two" src="../assets/sparkle.png" alt="sparkle">`;
+      sparkleBg.classList.add("sparkle-bg");
+      sparkleScreen.appendChild(sparkleBg);
+
+      setTimeout(() => sparkleBg.remove(), 5000);
+    }
+
+    // Remove after animation
+    setTimeout(() => sparkle.remove(), 5000);
+  }
+}
+
+/***************
+ * Game Actions
+ **************/
+
+// Shuffle
+document.getElementById("shuffle").addEventListener("click", () => {
+  if (
+    document.querySelectorAll(".letter-generator .letter-wrapper").length < 7
+  ) {
+    alert("You need to recall first.");
+    return;
+  }
+  displayLetters();
+});
+
+// Recall
+document.getElementById("recall").addEventListener("click", () => {
+  document
+    .querySelectorAll(".word-assembly .letter-wrapper")
+    .forEach((letter) => {
+      const index = letter.getAttribute("data-letter-index");
+      document
+        .querySelectorAll(".letter-generator .slot")
+        [index].appendChild(letter);
+    });
+  currentWord = "";
+  updatePlayerScore(0);
+});

@@ -49,48 +49,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Start
   displayLetters();
-
-  // Start Timer
-  window.startTime = Date.now();
-  function updateTimer() {
-    let elapsed = Math.floor((Date.now() - window.startTime) / 1000);
-    hours = Math.floor(elapsed / 3600);
-    minutes = Math.floor((elapsed - hours * 3600) / 60);
-    seconds = elapsed - hours * 3600 - minutes * 60;
-
-    timeString =
-      hours.toString().padStart(2, "0") +
-      ":" +
-      minutes.toString().padStart(2, "0") +
-      ":" +
-      seconds.toString().padStart(2, "0");
-
-    document.querySelector(".time-count").textContent = timeString;
-  }
-  setInterval(updateTimer, 1000);
-
-  // Shuffle
-  document.getElementById("shuffle").addEventListener("click", () => {
-    if (
-      document.querySelectorAll(".letter-generator .letter-wrapper").length < 7
-    ) {
-      alert("You need to recall first.");
-      return;
-    }
-    displayLetters();
-  });
-
-  // Recall
-  document.getElementById("recall").addEventListener("click", () => {
-    document
-      .querySelectorAll(".word-assembly .letter-wrapper")
-      .forEach((letter) => {
-        const index = letter.getAttribute("data-letter-index");
-        document
-          .querySelectorAll(".letter-generator .slot")
-          [index].appendChild(letter);
-      });
-    currentWord = "";
-    updatePlayerScore(0);
-  });
 });
