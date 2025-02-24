@@ -224,6 +224,8 @@ main {
   width: 600px;
   max-width: 100%;
   margin: auto;
+  background-color: #8f5f7e;
+  border: 8px solid #fff;
 }
 
 .top-players tr,
@@ -235,6 +237,8 @@ main {
 
 .top-players th {
   font-weight: 700;
+  background-color: #8f5f7e;
+  color: #fff;
 }
 
 .top-players .name {
@@ -246,6 +250,12 @@ main {
 .top-players tr td:nth-child(2) {
   text-align: left;
   padding-left: 10px;
+}
+
+.top-players td {
+  background-color: #ffffff;
+  color: #8f5f7e;
+  border: 1px solid #d4d4d4;
 }
 
 .cta {

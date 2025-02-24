@@ -68,10 +68,20 @@ function calculatePointsAndWord() {
       updatePlayerScore();
     });
 }
+
 // Drag
 function addDragEvent(slot) {
-  slot.addEventListener("dragstart", (e) => {
+  const letterWrapper = slot.querySelector(".letter-wrapper");
+
+  // Desktop Dragging
+  letterWrapper.addEventListener("dragstart", (e) => {
     e.dataTransfer.setData("text", e.target.getAttribute("data-letter-index"));
+  });
+
+  // Mobile Touch Dragging
+  letterWrapper.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    window.draggedElement = e.target.closest(".letter-wrapper");
   });
 }
 
@@ -85,32 +95,56 @@ function addDropEvent() {
 
   wordAssembly.addEventListener("drop", (e) => {
     e.preventDefault();
+    console.log("drop");
     let draggedSlotId = e.dataTransfer.getData("text");
     let draggedElement = document.querySelector(
       `[data-letter-index='${draggedSlotId}']`
     );
 
-    let emptySlot = [
-      ...document.querySelectorAll(".word-assembly .slot .slot-wrapper"),
-    ].find((wrapper) => wrapper.children.length === 0);
-
-    if (emptySlot) {
-      emptySlot.appendChild(draggedElement);
-    }
-    calculatePointsAndWord();
+    placeLetterInEmptySlot(draggedElement, "drop");
   });
+
+  // Touch Drop Event
+  wordAssembly.addEventListener("touchend", (e) => {
+    console.log("touched");
+    if (window.draggedElement) {
+      placeLetterInEmptySlot(window.draggedElement, "touch");
+      window.draggedElement = null;
+    }
+  });
+}
+
+function placeLetterInEmptySlot(draggedElement) {
+  let emptySlot = [
+    ...document.querySelectorAll(".word-assembly .slot .slot-wrapper"),
+  ].find((slot) => slot.children.length === 0);
+
+  if (emptySlot) {
+    emptySlot.appendChild(draggedElement);
+  }
+  calculatePointsAndWord();
 }
 
 function displayLetters() {
   window.game.letters.sort(() => Math.random() - 0.5);
   const letterSlots = document.querySelectorAll(".letter-generator .slot");
+
   letterSlots.forEach((slot, index) => {
+    slot.innerHTML = ""; // Clear previous letters
     const letter = game.letters[index];
-    slot.innerHTML = `<div class="letter-wrapper" data-letter-index="${index}" draggable="true">
-                          <span class="letter">${letter}</span>
-                          <span class="point">${game.points[letter]}</span>
-                        </div>`;
+    const letterWrapper = document.createElement("div");
+    letterWrapper.classList.add("letter-wrapper");
+    letterWrapper.setAttribute("data-letter-index", index);
+    letterWrapper.setAttribute("draggable", "true");
+
+    letterWrapper.innerHTML = `
+      <span class="letter">${letter}</span>
+      <span class="point">${game.points[letter]}</span>
+    `;
+
+    slot.appendChild(letterWrapper);
     addDragEvent(slot);
   });
+
   addDropEvent();
 }
