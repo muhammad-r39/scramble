@@ -107,6 +107,11 @@ main {
   transition: all 0.5s ease-in;
 }
 
+.invalid .progress-bar .progress {
+  opacity: 0.8;
+  background-color: #e91e63;
+}
+
 .word-assembly,
 .letter-generator {
   display: flex;

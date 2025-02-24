@@ -51,9 +51,7 @@ async function updatePlayerScore(score = playerScore) {
   }
 
   playerScore.textContent = score;
-
   const progressPercent = (score * 100) / window.game.highScore;
-  console.log(progressPercent);
   progress.style.width = `${progressPercent}%`;
 }
 
