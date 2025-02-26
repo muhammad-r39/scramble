@@ -55,9 +55,11 @@ async function updatePlayerScore(score = playerScore) {
     validScore = true;
   }
 
-  playerScore.textContent = score;
-  const progressPercent = (score * 100) / window.game.highScore;
-  progress.style.width = `${progressPercent}%`;
+  if (validScore) {
+    playerScore.textContent = score;
+    const progressPercent = (score * 100) / window.game.highScore;
+    progress.style.width = `${progressPercent}%`;
+  }
 
   if (validScore && score === window.game.highScore) {
     sparkle();
