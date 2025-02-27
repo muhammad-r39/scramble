@@ -1,3 +1,7 @@
+<?php
+require_once 'admin/config.php';
+require_once 'admin/session.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,10 +10,11 @@
     <title>SCRAMBLE | Word Game</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="icon" href="assets/favicon.png" />
+    <base href="./">
   </head>
   <body>
     <main>
-      <section>
+      <section id="game">
         <div class="container">
           <div class="headline">
             <h1>SCRAMBLE</h1>
@@ -20,7 +25,7 @@
             <span class="progress-bar">
               <span class="progress"></span>
             </span>
-            <span class="highest-score">20</span>
+            <span class="highest-score">0</span>
           </div>
           <div class="word-assembly">
             <div class="slot" data-slot-id="1">
@@ -96,36 +101,41 @@
               </tr>
             </tbody>
           </table>
+          <?php if (!isset($_SESSION['user_id'])) { ?>
           <div class="cta">
             <span class="btn-join btn-login">Join Now</span>
           </div>
+            <?php } ?>
           <div class="top-player-message">
             Be the first one to beat the high score.
           </div>
         </div>
+        <?php if (isset($_SESSION['user_id'])) { ?>
+          <span class="btn-logout">Logout</span>
+        <?php } ?>
       </section>
     </main>
     <div class="modal" id="registerModal">
       <span class="close-modal"></span>
       <div class="container">
         <h2>Register To Save Your Score</h2>
-        <form>
+        <form id="registrationForm">
           <div class="form-row">
             <div class="form-col">
-              <label for="first-name">First name</label>
-              <input type="text" id="first-name" placeholder="First Name" />
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" placeholder="First Name" />
             </div>
             <div class="form-col">
-              <label for="last-name">Last Name</label>
-              <input type="text" id="last-name" placeholder="Last Name" />
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" placeholder="Last Name" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-col">
-              <label for="email-address">Email Address</label>
+              <label for="emailAddress">Email Address</label>
               <input
                 type="email"
-                id="email-address"
+                id="emailAddress"
                 placeholder="Email Address"
               />
             </div>
@@ -138,17 +148,17 @@
           </div>
           <div class="form-row">
             <div class="form-col">
-              <label for="re-enter-password">Re-enter Password</label>
+              <label for="reEnterPassword">Re-enter Password</label>
               <input
                 type="password"
-                id="re-enter-password"
+                id="reEnterPassword"
                 placeholder="Re-enter Password"
               />
             </div>
           </div>
           <div class="form-row">
             <div class="form-col">
-              <input type="submit" name="submit" value="REGISTER" />
+              <input id="submit" type="submit" name="submit" value="REGISTER" />
             </div>
           </div>
         </form>
@@ -161,26 +171,31 @@
       <span class="close-modal"></span>
       <div class="container">
         <h2>Login To Continue</h2>
-        <form>
+        <form id="loginForm">
           <div class="form-row">
             <div class="form-col">
-              <label for="email-address">Email Address</label>
+              <label for="loginEmail">Email Address</label>
+              <input type="email" id="loginEmail" placeholder="Email Address" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <label for="loginPassword">Password</label>
               <input
-                type="email"
-                id="email-address"
-                placeholder="Email Address"
+                type="password"
+                id="loginPassword"
+                placeholder="Password"
               />
             </div>
           </div>
           <div class="form-row">
             <div class="form-col">
-              <label for="password">Password</label>
-              <input type="password" id="password" placeholder="Password" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-col">
-              <input type="submit" name="submit" value="LOGIN" />
+              <input
+                id="loginSubmit"
+                type="submit"
+                name="submit"
+                value="LOGIN"
+              />
             </div>
           </div>
         </form>
@@ -190,9 +205,12 @@
         </div>
       </div>
     </div>
+    <div class="loading-screen">
+      <p>Loading</p>
+    </div>
     <script src="./scripts/main.js"></script>
     <script src="./scripts/game.js"></script>
     <script src="./scripts/init.js"></script>
-    <script src="./scripts/win.js"></script>
+    <script src="./scripts/auth.js"></script>
   </body>
 </html>

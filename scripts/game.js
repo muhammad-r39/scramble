@@ -220,11 +220,10 @@ function displayLetters() {
 }
 
 // Start Timer
-let startTime = Date.now();
 let timerInterval = setInterval(updateTimer, 1000); // Store interval ID
 
 function updateTimer() {
-  let elapsed = Math.floor((Date.now() - startTime) / 1000);
+  let elapsed = Math.floor((Date.now() - window.game.startTime) / 1000);
   let hours = Math.floor(elapsed / 3600);
   let minutes = Math.floor((elapsed - hours * 3600) / 60);
   let seconds = elapsed - hours * 3600 - minutes * 60;
@@ -280,7 +279,7 @@ function createSparkles() {
   const centerY = window.innerHeight / 2;
   for (let i = 0; i < 5; i++) {
     let sparkle = document.createElement("span");
-    sparkle.innerHTML = `<img src="../assets/star${
+    sparkle.innerHTML = `<img src="assets/star${
       Math.floor(Math.random() * 2) + 1
     }.webp" alt="sparkle">`;
     sparkle.classList.add("sparkle");
@@ -304,8 +303,8 @@ function createSparkles() {
 
     if (!document.querySelector(".sparkle-bg")) {
       let sparkleBg = document.createElement("span");
-      sparkleBg.innerHTML = `<img class="one" src="../assets/sparkle.png" alt="sparkle">
-                            <img class="two" src="../assets/sparkle.png" alt="sparkle">`;
+      sparkleBg.innerHTML = `<img class="one" src="assets/sparkle.png" alt="sparkle">
+                            <img class="two" src="assets/sparkle.png" alt="sparkle">`;
       sparkleBg.classList.add("sparkle-bg");
       sparkleScreen.appendChild(sparkleBg);
 
