@@ -15,9 +15,9 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
 $stmt->execute(['user_id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$stmt = $pdo->prepare("SELECT * FROM leaderboard");
+$stmt = $pdo->prepare("SELECT * FROM leaderboard ORDER BY time_taken ASC LIMIT 10");
 $stmt->execute();
-$leaderboard = $stmt->fetch(PDO::FETCH_ASSOC);
+$leaderboard = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 echo json_encode([
     "success" => true,

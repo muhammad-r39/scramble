@@ -70,7 +70,7 @@ require_once 'admin/session.php';
       <section class="top-players">
         <div class="container">
           <h2>Today's Top 10</h2>
-          <table>
+          <table id="topPlayers">
             <thead>
               <tr>
                 <th class="position">No</th>
@@ -79,26 +79,7 @@ require_once 'admin/session.php';
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>John</td>
-                <td>00:08:23</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Lynda</td>
-                <td>00:10:40</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Ammy</td>
-                <td>00:12:03</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Michael</td>
-                <td>00:12:28</td>
-              </tr>
+              
             </tbody>
           </table>
           <?php if (!isset($_SESSION['user_id'])) { ?>

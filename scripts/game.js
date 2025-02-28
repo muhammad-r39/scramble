@@ -307,15 +307,31 @@ function sparkle() {
     });
   });
 
-  processWin(beatTime);
-
   // Add sparkle effect
   createSparkles();
+
+  if (window.user) {
+    processLoggedUser(beatTime);
+  }
 }
 
-function processWin(beatTime) {
-  // location.reload();
-  console.log("process win" + beatTime);
+async function processLoggedUser(beatTime) {
+  const data = {
+    action: "updatePlayerWin",
+    beatTime: beatTime,
+    score: window.game.highScore,
+  };
+  const response = await fetch("admin/update.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (result.success) {
+    console.log(result);
+  }
 }
 
 // Sparkle effect function

@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         // Store in global scope
+        window.leaderboard = result.leaderboard;
         window.user = result.user;
 
         if (result.user.win > 0) {
@@ -104,6 +105,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelector(".loading-screen").style.display = "flex";
 
   await getGameInitData();
+
+  const topPlayers = document.querySelector("#topPlayers tbody");
+
+  const leaderboard = Object.entries(window.leaderboard);
+
+  let topPlayerList = "";
+
+  leaderboard.forEach((player, index) => {
+    console.log(player);
+    topPlayerList += `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${player[1].fullname}</td>
+      <td>${player[1].time_taken}</td>
+    </tr>`;
+  });
+
+  topPlayers.innerHTML = topPlayerList;
+  // document.querySelector("#topPlayers tbody").innerHTML;
 
   // Hide loading screen once data is ready
   document.querySelector(".loading-screen").style.display = "none";
