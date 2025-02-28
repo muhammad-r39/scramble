@@ -10,11 +10,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           highScore: result.highScore,
           letters: result.letters,
           points: result.points,
-          startTime: result.start_time,
+          bestWord: result.bestWord,
+          startedAt: result.started_at,
         };
 
         // Store in global scope
+        window.user = result.user;
         window.game = game;
+
+        window.game.startTime = new Date(await playerStartTime());
 
         // Initialize the game AFTER the data is fully loaded
         initializeGame();
@@ -23,6 +27,50 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     } catch (error) {
       console.error("Error fetching game data:", error);
+    }
+  }
+
+  /**
+   * if null set current time
+   * if time exist check if its after game starttime
+   *
+   */
+
+  async function playerStartTime() {
+    if (!window.user) {
+      return new Date();
+    }
+
+    let lastActiveTime = window.user.last_active;
+
+    if (!lastActiveTime) {
+      // No time found
+      lastActiveTime = await updatePlayerActiveTime(lastActiveTime);
+    } else {
+      if (lastActiveTime < window.game.startedAt) {
+        // If not in current session
+        lastActiveTime = await updatePlayerActiveTime(lastActiveTime);
+      }
+    }
+
+    return lastActiveTime;
+  }
+
+  async function updatePlayerActiveTime(activeTime) {
+    const data = {
+      action: "updatePlayerStartTime",
+    };
+    const response = await fetch("admin/update.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
+    console.log(result);
+    if (result.success) {
+      return result.start_time;
     }
   }
 

@@ -17,16 +17,16 @@ async function validateWord() {
   await new Promise((resolve) => setTimeout(resolve, 0));
 
   try {
-    let response = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`
-    );
+    let response = await fetch("word-engine/output/words.json.php");
 
     if (!response.ok) {
+      console.error("Failed to load dictionary");
       return false;
     }
 
-    let data = await response.json();
-    return Array.isArray(data) && data.length > 0;
+    let words = await response.json();
+
+    return words.hasOwnProperty(currentWord.toLowerCase());
   } catch (error) {
     console.error("Error validating word:", error);
     return false;
