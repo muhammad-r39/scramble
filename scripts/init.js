@@ -18,12 +18,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.leaderboard = result.leaderboard;
         window.user = result.user;
 
-        if (result.user.win > 0) {
+        if (!result.user) {
+          checkGuestWinStatus(result.started_at);
+          let guestData = localStorage.getItem("guestGameData");
+          if (guestData) {
+            guestData = JSON.parse(guestData);
+            if (guestData.winTime) {
+              return; // guest player won
+            }
+          }
+        } else if (result.user.win > 0) {
           const gameContainer = document.querySelector("#game .container");
           gameContainer.innerHTML = `
             <div class="headline">
-              <h1>CONGRATULATIONS!</h1>
-              <h2>You have won! You beat the game in: ${result.user.beat_time}</h2>
+              <h2>🎉 Congratulations! 🎉</h2>
+              <h3>You have won! You beat the game in: ${result.user.beat_time}</h3>
               <p>Please wait for next round to start!</p>
               <p class="next-round">00:00:00</p>
             </div>
@@ -48,21 +57,74 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  function displayGuestWinScreen(started_at, beat_time) {
+    const gameContainer = document.querySelector("#game .container");
+    gameContainer.innerHTML = `
+            <div class="headline">
+              <h2>🎉 Congratulations! 🎉</h2>
+              <h3>You have won! You beat the game in: ${beat_time}</h3>
+              <p>Please wait for next round to start!</p>
+              <p class="next-round">00:00:00</p>
+              <span class="btn-save">Save Your Win</span>
+            </div>
+          `;
+    document.querySelector(".btn-save").addEventListener("click", () => {
+      document.querySelector("#loginModal").style.display = "block";
+    });
+    countdown(started_at);
+  }
+
+  function checkGuestWinStatus(startedAt) {
+    let guestData = localStorage.getItem("guestGameData");
+    if (guestData) {
+      guestData = JSON.parse(guestData);
+      if (guestData.winTime) {
+        // If the saved win data is outdated, remove it
+        if (guestData.winTime < window.game.startedAt) {
+          localStorage.removeItem("guestGameData");
+        } else {
+          // Guest has already won, display message
+          displayGuestWinScreen(startedAt, guestData.beatTime);
+          return true;
+        }
+      }
+    }
+  }
+
   async function playerStartTime() {
     if (!window.user) {
-      return new Date();
+      // Check if a guest user's game data exists
+      let guestData = localStorage.getItem("guestGameData");
+
+      if (guestData) {
+        guestData = JSON.parse(guestData);
+
+        // Check if the saved time is older than the game reset time
+        if (guestData.startTime < window.game.startedAt) {
+          localStorage.removeItem("guestGameData"); // Remove expired data
+        } else {
+          return new Date(guestData.startTime); // Return saved time
+        }
+      }
+
+      // No valid saved time, so store a new one
+      let newStartTime = new Date();
+      localStorage.setItem(
+        "guestGameData",
+        JSON.stringify({
+          startTime: newStartTime.getTime(),
+          expiresAt: newStartTime.getTime() + 24 * 60 * 60 * 1000, // 24-hour expiration
+        })
+      );
+
+      return newStartTime;
     }
 
+    // For logged-in users
     let lastActiveTime = window.user.last_active;
 
-    if (!lastActiveTime) {
-      // No time found
+    if (!lastActiveTime || lastActiveTime < window.game.startedAt) {
       lastActiveTime = await updatePlayerActiveTime();
-    } else {
-      if (lastActiveTime < window.game.startedAt) {
-        // If not in current session
-        lastActiveTime = await updatePlayerActiveTime();
-      }
     }
 
     return lastActiveTime;
@@ -113,7 +175,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   let topPlayerList = "";
 
   leaderboard.forEach((player, index) => {
-    console.log(player);
     topPlayerList += `
     <tr>
       <td>${index + 1}</td>

@@ -96,6 +96,22 @@ if ($result['success']) {
   $stmt = $pdo->prepare("INSERT INTO game_data (letters, boost_slot, boost_multiplier, high_score, best_word) VALUES (?, ?, ?, ?, ?)");
   $stmt->execute([implode('', $letters), $boostSlot, $boostMultiplier, $result['highScore'], $result['bestWord']]);
 
+  try {
+    $pdo->beginTransaction();
+
+    // Clear leaderboard table
+    $pdo->exec("DELETE FROM leaderboard");
+
+    // Reset user table
+    $pdo->exec("UPDATE users SET last_active = NULL, win = 0, beat_time = ''");
+
+    $pdo->commit();
+
+  } catch (PDOException $e) {
+    $pdo->rollBack();
+    echo "Error resetting game: " . $e->getMessage();
+  }
+
   echo "Game data generated successfully!";
 } else {
   echo "Failed to generate game data!";

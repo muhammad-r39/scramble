@@ -288,8 +288,8 @@ function sparkle() {
     win.classList.add("darker");
     win.innerHTML = `
             <div class="headline">
-              <h1>CONGRATULATIONS!</h1>
-              <h2>You have won! You beat the game in: ${beatTime}</h2>
+              <h2>🎉 Congratulations! 🎉</h2>
+              <h3>You have won! You beat the game in: ${beatTime}</h3>
               <p>Please wait for next round to start!</p>
               <p class="next-round">00:00:00</p>
               <span class="btn btn-leaderboard" onclick="location.reload()">See Leaderboard</span>
@@ -312,6 +312,30 @@ function sparkle() {
 
   if (window.user) {
     processLoggedUser(beatTime);
+  } else {
+    processGuestWin(beatTime);
+  }
+}
+
+function processGuestWin(beatTime) {
+  const score = window.game.highScore;
+
+  // Check for existing guest win data
+  let guestData = localStorage.getItem("guestGameData");
+
+  if (guestData) {
+    // Save new guest win
+    let winTime = new Date().getTime();
+    localStorage.setItem(
+      "guestGameData",
+      JSON.stringify({
+        score: score,
+        beatTime: beatTime,
+        winTime: winTime,
+        startTime: window.game.startedAt,
+        expiresAt: winTime + 24 * 60 * 60 * 1000, // Expire in 24 hours
+      })
+    );
   }
 }
 
@@ -330,7 +354,7 @@ async function processLoggedUser(beatTime) {
   });
   const result = await response.json();
   if (result.success) {
-    console.log(result);
+    // console.log(result);
   }
 }
 

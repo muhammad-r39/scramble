@@ -567,6 +567,18 @@ main {
   }
 }
 
+.btn-save {
+  background-color: #fff;
+  padding: 0.8rem 1.5rem;
+  display: inline-block;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.next-round {
+  font-weight: 700;
+}
+
 .top-players {
   position: relative;
 }
@@ -580,6 +592,7 @@ main {
   text-transform: uppercase;
   font-size: 12px;
   cursor: pointer;
+  display: none;
 }
 
 .loading-screen {

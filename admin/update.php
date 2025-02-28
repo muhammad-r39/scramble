@@ -54,7 +54,7 @@ if (isset($data['action']) && $data['action'] == 'updatePlayerWin') {
 
       // Insert into Leaderboard
       $stmt = $pdo->prepare("INSERT INTO leaderboard (fullname, score, time_taken, date) VALUES (:fullname, :score, :timeTaken, NOW())");
-      
+
       $stmt->execute([
         'fullname' => $user['first_name'] . ' ' . $user['last_name'],
         'score' => $score,

@@ -4,6 +4,19 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelector("#registrationForm #submit")
     .addEventListener("click", (e) => {
       e.preventDefault();
+
+      // check current user state
+      const guestPlayer = {};
+      let guestData = localStorage.getItem("guestGameData");
+
+      if (guestData) {
+        guestData = JSON.parse(guestData);
+        guestPlayer.playerStartedAt = guestData.startTime;
+        guestPlayer.playerWon = guestData.winTime ? 1 : 0;
+        guestPlayer.playerScore = guestData.score || 0;
+        guestPlayer.playerBeatTime = guestData.beatTime || "";
+      }
+
       // Clear previous error messages
       const errorMessages = document.querySelectorAll(".error-message");
       errorMessages.forEach((message) => message.remove());
@@ -61,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
         lastName: lastName,
         email: email,
         password: password,
+        guestPlayer: guestPlayer,
       };
 
       // Send registration data to the backend
@@ -106,7 +120,18 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .querySelector("#loginForm #loginSubmit")
     .addEventListener("click", (e) => {
-      e.preventDefault();
+      e.preventDefault(); // check current user state
+      const guestPlayer = {};
+      let guestData = localStorage.getItem("guestGameData");
+
+      if (guestData) {
+        guestData = JSON.parse(guestData);
+        guestPlayer.playerStartedAt = guestData.startTime;
+        guestPlayer.playerWon = guestData.winTime ? 1 : 0;
+        guestPlayer.playerScore = guestData.score || 0;
+        guestPlayer.playerBeatTime = guestData.beatTime || "";
+      }
+
       // Clear previous error messages
       const errorMessages = document.querySelectorAll(".error-message");
       errorMessages.forEach((message) => message.remove());
@@ -138,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
         action: "login",
         email: email,
         password: password,
+        guestPlayer: guestPlayer,
       };
 
       fetch("admin/login.php", {
