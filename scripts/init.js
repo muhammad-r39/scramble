@@ -16,6 +16,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Store in global scope
         window.user = result.user;
+
+        if (result.user.win > 0) {
+          const gameContainer = document.querySelector("#game .container");
+          gameContainer.innerHTML = `
+            <div class="headline">
+              <h1>CONGRATULATIONS!</h1>
+              <h2>You have won! You beat the game in: ${result.user.beat_time}</h2>
+              <p>Please wait for next round to start!</p>
+              <p class="next-round">00:00:00</p>
+            </div>
+          `;
+
+          countdown(result.started_at);
+
+          return;
+        }
+
         window.game = game;
 
         window.game.startTime = new Date(await playerStartTime());
@@ -30,12 +47,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  /**
-   * if null set current time
-   * if time exist check if its after game starttime
-   *
-   */
-
   async function playerStartTime() {
     if (!window.user) {
       return new Date();
@@ -45,18 +56,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!lastActiveTime) {
       // No time found
-      lastActiveTime = await updatePlayerActiveTime(lastActiveTime);
+      lastActiveTime = await updatePlayerActiveTime();
     } else {
       if (lastActiveTime < window.game.startedAt) {
         // If not in current session
-        lastActiveTime = await updatePlayerActiveTime(lastActiveTime);
+        lastActiveTime = await updatePlayerActiveTime();
       }
     }
 
     return lastActiveTime;
   }
 
-  async function updatePlayerActiveTime(activeTime) {
+  async function updatePlayerActiveTime() {
     const data = {
       action: "updatePlayerStartTime",
     };
@@ -68,7 +79,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       body: JSON.stringify(data),
     });
     const result = await response.json();
-    console.log(result);
     if (result.success) {
       return result.start_time;
     }

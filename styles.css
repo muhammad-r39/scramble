@@ -428,6 +428,30 @@ main {
   animation: fadeIn 0.5s ease-in-out;
 }
 
+.sparkle-screen.darker {
+  background-color: rgb(255 200 234 / 98%);
+}
+
+.sparkle-screen .headline {
+  max-width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-leaderboard {
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #8f5f7e;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  padding: 1rem 2rem;
+}
+
 .sparkle-container {
   position: relative;
   width: 500px;
@@ -451,6 +475,11 @@ main {
   padding: 0.5rem 1.5rem;
   text-decoration: none;
   border-radius: 4px;
+}
+
+.sparkle-screen .next-round {
+  font-weight: 700;
+  font-size: 1.5rem;
 }
 
 .sparkle-screen .beat-time {
@@ -680,11 +709,27 @@ main {
   .modal .form-row {
     flex-direction: column;
   }
+  .sparkle-screen .headline h1 {
+    font-size: 30px;
+  }
+  .sparkle-screen .headline h2 {
+    font-size: 22px;
+  }
 }
 
 @media screen and (max-width: 400px) {
   .headline h1 {
     font-size: 40px;
+  }
+  .sparkle-screen .headline h1 {
+    font-size: 24px;
+  }
+  .sparkle-screen .headline h2 {
+    font-size: 18px;
+  }
+  .btn-leaderboard {
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
   }
   .scores {
     font-size: 24px;

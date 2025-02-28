@@ -15,6 +15,10 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
 $stmt->execute(['user_id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$stmt = $pdo->prepare("SELECT * FROM leaderboard");
+$stmt->execute();
+$leaderboard = $stmt->fetch(PDO::FETCH_ASSOC);
+
 echo json_encode([
     "success" => true,
     "letters" => str_split($game["letters"]),
@@ -23,7 +27,8 @@ echo json_encode([
     "boost" => ["slot" => $game["boost_slot"], "by" => $game["boost_multiplier"]],
     "points" => LETTER_POINTS,
     "started_at" => $game['created_at'],
-    "user" => $user
+    "user" => $user,
+    "leaderboard" => $leaderboard
 ]);
 
 ?>

@@ -235,7 +235,33 @@ function updateTimer() {
     ":" +
     seconds.toString().padStart(2, "0");
 
-  document.querySelector(".time-count").textContent = timeString;
+  const timeCount = document.querySelector(".time-count");
+  if (timeCount) timeCount.textContent = timeString;
+}
+
+function countdown(time) {
+  const countDownDate = new Date(
+    new Date(time).getTime() + 60 * 60 * 24 * 1000
+  );
+
+  // Update the count down every 1 second
+  const x = setInterval(function () {
+    const distance = countDownDate - new Date().getTime();
+    const hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.querySelectorAll(".next-round").forEach((target) => {
+      target.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+    });
+
+    if (distance < 0) {
+      clearInterval(x);
+      location.reload();
+    }
+  }, 1000);
 }
 
 // Win function with sparkle effect
@@ -248,7 +274,8 @@ function sparkle() {
   const win = document.createElement("div");
   win.classList.add("sparkle-screen");
 
-  win.innerHTML = `
+  if (!window.user) {
+    win.innerHTML = `
     <div class="sparkle-container">
       <h2>🎉 Congratulations! 🎉</h2>
       <h3>You have found today's highest point word.</h3>
@@ -257,7 +284,19 @@ function sparkle() {
       <span class="btn-link btn-register">Register</span>
     </div>
   `;
-
+  } else {
+    win.classList.add("darker");
+    win.innerHTML = `
+            <div class="headline">
+              <h1>CONGRATULATIONS!</h1>
+              <h2>You have won! You beat the game in: ${beatTime}</h2>
+              <p>Please wait for next round to start!</p>
+              <p class="next-round">00:00:00</p>
+              <span class="btn btn-leaderboard" onclick="location.reload()">See Leaderboard</span>
+            </div>
+          `;
+  }
+  countdown(window.game.startedAt);
   document.querySelector("body").appendChild(win);
 
   document.querySelectorAll(".btn-register").forEach((btn) => {
@@ -268,8 +307,15 @@ function sparkle() {
     });
   });
 
+  processWin(beatTime);
+
   // Add sparkle effect
   createSparkles();
+}
+
+function processWin(beatTime) {
+  // location.reload();
+  console.log("process win" + beatTime);
 }
 
 // Sparkle effect function

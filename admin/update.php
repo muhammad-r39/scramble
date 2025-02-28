@@ -16,11 +16,15 @@ if (isset($data['action']) && $data['action'] == 'updatePlayerStartTime') {
     $stmt = $pdo->prepare("UPDATE users SET last_active = NOW() WHERE id = :user_id");
     $stmt->execute(['user_id' => $user_id]);
 
-    if ($stmt->rowCount() > 0) { // Check if update was successful
+    if ($stmt->rowCount() > 0) {
+      $stmt = $pdo->prepare("SELECT last_active FROM users WHERE id = :user_id");
+      $stmt->execute(['user_id' => $user_id]);
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
       $result = [
         'success' => true,
         'message' => 'Player start time updated.',
-        'start_time' => date('Y-m-d H:i:s') // CURDATE() sets today's date
+        'start_time' => $user['last_active']
       ];
     } else {
       $result['message'] = 'No changes made. User not found or already up to date.';
