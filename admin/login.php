@@ -23,7 +23,7 @@ if ($data['action'] == 'login') {
   }
 
   // Prepare and execute SQL query to check user
-  $stmt = $pdo->prepare("SELECT id, password FROM users WHERE email = :email");
+  $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
   $stmt->bindParam(':email', $email);
   $stmt->execute();
 
@@ -41,32 +41,39 @@ if ($data['action'] == 'login') {
     $result['message'] = 'Invalid email or password.';
   }
 
-  if ($guestStartedAt) {
+  if ($guestStartedAt && isset($result['user'])) {
     // Update User table
     $stmt = $pdo->prepare("UPDATE users SET last_active = :last_active WHERE id = :user_id");
-    $stmt->execute(['user_id' => $user['id'], 'last_active' => $guestStartedAt]);
-    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->execute(['user_id' => $result['user']['id'], 'last_active' => $guestStartedAt]);
 
-    if ($res) {
+    if ($stmt->rowCount() > 0) {
       $result['success'] = true;
-      $result['message'] = 'User Updated.';
+      $result['message'] = 'Login successful.';
     } else {
-      // $result['message'] = 'Failed to Update User.';
+      $result['message'] = 'Failed to Update User.';
     }
   }
 
-  if ($guestWin > 0) {
+  if ($guestWin > 0 && isset($result['user'])) {
+    $stmt = $pdo->prepare("UPDATE users SET win = 1 WHERE id = :user_id");
+    $stmt->execute(['user_id' => $result['user']['id']]);
+    if ($stmt->rowCount() > 0) {
+      $result['success'] = true;
+      $result['message'] = 'Login successful.';
+    } else {
+      $result['message'] = 'Failed to Update User.';
+    }
+
     // Insert into Leaderboard
     $stmt = $pdo->prepare("INSERT INTO leaderboard (fullname, score, time_taken, date) VALUES (:fullname, :score, :timeTaken, NOW())");
 
     $stmt->execute([
-      'fullname' => $user['first_name'] . ' ' . $user['last_name'],
+      'fullname' => $result['user']['first_name'] . ' ' . $result['user']['last_name'],
       'score' => $guestScore,
       'timeTaken' => $guestBeatTime
     ]);
-    $res = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($res) {
+    if ($stmt->rowCount() > 0) {
       $result['success'] = true;
       $result['message'] = 'Leaderboard Updated.';
     } else {

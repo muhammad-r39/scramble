@@ -78,15 +78,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     let guestData = localStorage.getItem("guestGameData");
     if (guestData) {
       guestData = JSON.parse(guestData);
-      if (guestData.winTime) {
-        // If the saved win data is outdated, remove it
-        if (guestData.winTime < window.game.startedAt) {
-          localStorage.removeItem("guestGameData");
-        } else {
-          // Guest has already won, display message
-          displayGuestWinScreen(startedAt, guestData.beatTime);
-          return true;
-        }
+      if (guestData.startTime < startedAt) {
+        localStorage.removeItem("guestGameData");
+      } else if (guestData.winTime) {
+        // Guest has already won, display message
+        displayGuestWinScreen(startedAt, guestData.beatTime);
+        return true;
       }
     }
   }
@@ -112,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       localStorage.setItem(
         "guestGameData",
         JSON.stringify({
-          startTime: newStartTime.getTime(),
+          startTime: newStartTime,
           expiresAt: newStartTime.getTime() + 24 * 60 * 60 * 1000, // 24-hour expiration
         })
       );
@@ -174,13 +171,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let topPlayerList = "";
 
+  if (leaderboard.length < 1) {
+    topPlayerList += `
+      <tr>
+        <td colspan="3">Be the first</td>
+      </tr>`;
+  }
+
   leaderboard.forEach((player, index) => {
     topPlayerList += `
-    <tr>
-      <td>${index + 1}</td>
-      <td>${player[1].fullname}</td>
-      <td>${player[1].time_taken}</td>
-    </tr>`;
+  <tr>
+    <td>${index + 1}</td>
+    <td>${player[1].fullname}</td>
+    <td>${player[1].time_taken}</td>
+  </tr>`;
   });
 
   topPlayers.innerHTML = topPlayerList;
