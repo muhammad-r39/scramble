@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function playerStartTime() {
+    let newStartTime = new Date();
     if (!window.user) {
       // Check if a guest user's game data exists
       let guestData = localStorage.getItem("guestGameData");
@@ -105,26 +106,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       // No valid saved time, so store a new one
-      let newStartTime = new Date();
       localStorage.setItem(
         "guestGameData",
         JSON.stringify({
-          startTime: newStartTime,
+          startTime: newStartTime.getTime(),
           expiresAt: newStartTime.getTime() + 24 * 60 * 60 * 1000, // 24-hour expiration
         })
       );
-
-      return newStartTime;
     }
-
+    /*
     // For logged-in users
     let lastActiveTime = window.user.last_active;
 
     if (!lastActiveTime || lastActiveTime < window.game.startedAt) {
       lastActiveTime = await updatePlayerActiveTime();
     }
+    */
 
-    return lastActiveTime;
+    return newStartTime;
   }
 
   async function updatePlayerActiveTime() {

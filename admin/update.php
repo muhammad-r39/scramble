@@ -10,6 +10,7 @@ $result = [
   'message' => 'Something went wrong!'
 ];
 
+/*
 // Update Start Time
 if (isset($data['action']) && $data['action'] == 'updatePlayerStartTime') {
   try {
@@ -33,6 +34,7 @@ if (isset($data['action']) && $data['action'] == 'updatePlayerStartTime') {
     $result['message'] = 'Database error: ' . $e->getMessage();
   }
 }
+*/
 
 // Update Win Status
 if (isset($data['action']) && $data['action'] == 'updatePlayerWin') {

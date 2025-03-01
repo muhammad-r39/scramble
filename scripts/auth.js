@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (guestData) {
         guestData = JSON.parse(guestData);
-        guestPlayer.playerStartedAt = guestData.startTime;
+        /*guestPlayer.playerStartedAt = new Date(
+          guestData.startTime
+        ).toISOString();*/
         guestPlayer.playerWon = guestData.winTime ? 1 : 0;
         guestPlayer.playerScore = guestData.score || 0;
         guestPlayer.playerBeatTime = guestData.beatTime || "";
@@ -126,7 +128,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (guestData) {
         guestData = JSON.parse(guestData);
-        guestPlayer.playerStartedAt = new Date(guestData.startTime);
+        /*
+        guestPlayer.playerStartedAt = new Date(
+          guestData.startTime
+        ).toISOString();
+        */
         guestPlayer.playerWon = guestData.winTime ? 1 : 0;
         guestPlayer.playerScore = guestData.score || 0;
         guestPlayer.playerBeatTime = guestData.beatTime || "";

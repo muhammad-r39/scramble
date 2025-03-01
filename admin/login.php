@@ -11,7 +11,8 @@ if ($data['action'] == 'login') {
   $password = $data['password'];
 
   $guest = $data['guestPlayer'];
-  $guestStartedAt = isset($guest['playerStartedAt']) ? $guest['playerStartedAt'] : NULL;
+  // $guestStartedAt = isset($guest['playerStartedAt']) ? $guest['playerStartedAt'] : NULL;
+  // $utcTime = date('Y-m-d H:i:s', strtotime($guestStartedAt));
   $guestWin = isset($guest['playerWon']) ? $guest['playerWon'] : 0;
   $guestScore = isset($guest['playerScore']) ? $guest['playerScore'] : 0;
   $guestBeatTime = isset($guest['playerBeatTime']) ? $guest['playerBeatTime'] : '';
@@ -40,11 +41,11 @@ if ($data['action'] == 'login') {
     // Invalid credentials
     $result['message'] = 'Invalid email or password.';
   }
-
-  if ($guestStartedAt && isset($result['user'])) {
+/*
+  if ($utcTime && isset($result['user'])) {
     // Update User table
     $stmt = $pdo->prepare("UPDATE users SET last_active = :last_active WHERE id = :user_id");
-    $stmt->execute(['user_id' => $result['user']['id'], 'last_active' => $guestStartedAt]);
+    $stmt->execute(['user_id' => $result['user']['id'], 'last_active' => $utcTime]);
 
     if ($stmt->rowCount() > 0) {
       $result['success'] = true;
@@ -53,7 +54,7 @@ if ($data['action'] == 'login') {
       $result['message'] = 'Failed to Update User.';
     }
   }
-
+*/
   if ($guestWin > 0 && isset($result['user'])) {
     $stmt = $pdo->prepare("UPDATE users SET win = 1 WHERE id = :user_id");
     $stmt->execute(['user_id' => $result['user']['id']]);

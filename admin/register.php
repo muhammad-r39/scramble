@@ -12,7 +12,8 @@ if ($data['action'] == 'register') {
   $password = trim($data['password']);
 
   $guest = $data['guestPlayer'];
-  $guestStartedAt = isset($guest['playerStartedAt']) ? $guest['playerStartedAt'] : NULL;
+  // $guestStartedAt = isset($guest['playerStartedAt']) ? $guest['playerStartedAt'] : NULL;
+  // $utcTime = date('Y-m-d H:i:s', strtotime($guestStartedAt));
   $guestWin = isset($guest['playerWon']) ? $guest['playerWon'] : 0;
   $guestScore = isset($guest['playerScore']) ? $guest['playerScore'] : 0;
   $guestBeatTime = isset($guest['playerBeatTime']) ? $guest['playerBeatTime'] : '';
@@ -37,13 +38,13 @@ if ($data['action'] == 'register') {
   $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
   // Insert the new user into the database
-  $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, created_at, last_active, win, beat_time)
-                          VALUES (:first_name, :last_name, :email, :password, NOW(), :last_active, :win, :beat_time)");
+  $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, created_at, win, beat_time)
+                          VALUES (:first_name, :last_name, :email, :password, NOW(), :win, :beat_time)");
   $stmt->bindParam(':first_name', $firstName);
   $stmt->bindParam(':last_name', $lastName);
   $stmt->bindParam(':email', $email);
   $stmt->bindParam(':password', $hashedPassword);
-  $stmt->bindParam(':last_active', $guestStartedAt);
+  // $stmt->bindParam(':last_active', $utcTime);
   $stmt->bindParam(':win', $guestWin, PDO::PARAM_INT);
   $stmt->bindParam(':beat_time', $guestBeatTime);
 
@@ -63,9 +64,8 @@ if ($data['action'] == 'register') {
       'score' => $guestScore,
       'timeTaken' => $guestBeatTime
     ]);
-    $res = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($res) {
+    if ($stmt->rowCount() > 0) {
       $result['success'] = true;
       $result['message'] = 'Leaderboard Updated.';
     } else {
