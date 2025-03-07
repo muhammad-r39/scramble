@@ -41,8 +41,8 @@ if ($data['action'] == 'login') {
     // Invalid credentials
     $result['message'] = 'Invalid email or password.';
   }
-/*
-  if ($utcTime && isset($result['user'])) {
+  /*
+  if (isset($result['user'])) {
     // Update User table
     $stmt = $pdo->prepare("UPDATE users SET last_active = :last_active WHERE id = :user_id");
     $stmt->execute(['user_id' => $result['user']['id'], 'last_active' => $utcTime]);
@@ -53,11 +53,11 @@ if ($data['action'] == 'login') {
     } else {
       $result['message'] = 'Failed to Update User.';
     }
-  }
-*/
+  }*/
+
   if ($guestWin > 0 && isset($result['user'])) {
-    $stmt = $pdo->prepare("UPDATE users SET win = 1 WHERE id = :user_id");
-    $stmt->execute(['user_id' => $result['user']['id']]);
+    $stmt = $pdo->prepare("UPDATE users SET win = 1, beat_time = :beat_time WHERE id = :user_id");
+    $stmt->execute(['user_id' => $result['user']['id'], 'beat_time' => $guestBeatTime]);
     if ($stmt->rowCount() > 0) {
       $result['success'] = true;
       $result['message'] = 'Login successful.';

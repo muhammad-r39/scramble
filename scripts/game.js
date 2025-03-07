@@ -223,7 +223,7 @@ function displayLetters() {
 let timerInterval = setInterval(updateTimer, 1000); // Store interval ID
 
 function updateTimer() {
-  let elapsed = Math.floor((Date.now() - window.game.startTime) / 1000);
+  let elapsed = Math.floor((Date.now() - window.user.started_at) / 1000);
   let hours = Math.floor(elapsed / 3600);
   let minutes = Math.floor((elapsed - hours * 3600) / 60);
   let seconds = elapsed - hours * 3600 - minutes * 60;
@@ -259,7 +259,7 @@ function countdown(time) {
 
     if (distance < 0) {
       clearInterval(x);
-      location.reload();
+      // location.reload();
     }
   }, 1000);
 }
@@ -274,7 +274,7 @@ function sparkle() {
   const win = document.createElement("div");
   win.classList.add("sparkle-screen");
 
-  if (!window.user) {
+  if (window.user.guest) {
     win.innerHTML = `
     <div class="sparkle-container">
       <h2>🎉 Congratulations! 🎉</h2>
@@ -310,33 +310,24 @@ function sparkle() {
   // Add sparkle effect
   createSparkles();
 
-  if (window.user) {
-    processLoggedUser(beatTime);
-  } else {
+  if (window.user.guest) {
+    console.log("guest");
     processGuestWin(beatTime);
+  } else {
+    processLoggedUser(beatTime);
   }
 }
 
 function processGuestWin(beatTime) {
   const score = window.game.highScore;
-
-  // Check for existing guest win data
-  let guestData = localStorage.getItem("guestGameData");
-
-  if (guestData) {
-    // Save new guest win
-    let winTime = new Date().getTime();
-    localStorage.setItem(
-      "guestGameData",
-      JSON.stringify({
-        score: score,
-        beatTime: beatTime,
-        winTime: winTime,
-        startTime: window.game.startedAt,
-        expiresAt: winTime + 24 * 60 * 60 * 1000, // Expire in 24 hours
-      })
-    );
-  }
+  localStorage.setItem(
+    "guestGameData",
+    JSON.stringify({
+      score: score,
+      beatTime: beatTime,
+      startTime: window.game.startedAt,
+    })
+  );
 }
 
 async function processLoggedUser(beatTime) {

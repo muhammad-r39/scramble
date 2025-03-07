@@ -16,17 +16,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Store in global scope
         window.leaderboard = result.leaderboard;
-        window.user = result.user;
+        window.user = result.user
+          ? result.user
+          : {
+              guest: true,
+            };
+        window.user.started_at = new Date();
 
-        if (!result.user) {
-          checkGuestWinStatus(result.started_at);
-          let guestData = localStorage.getItem("guestGameData");
-          if (guestData) {
-            guestData = JSON.parse(guestData);
-            if (guestData.winTime) {
-              return; // guest player won
-            }
-          }
+        if (!result.user && checkGuestWinStatus(result.started_at)) {
+          return;
         } else if (result.user.win > 0) {
           const gameContainer = document.querySelector("#game .container");
           gameContainer.innerHTML = `
@@ -80,12 +78,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       guestData = JSON.parse(guestData);
       if (guestData.startTime < startedAt) {
         localStorage.removeItem("guestGameData");
-      } else if (guestData.winTime) {
+        return;
+      } else if (guestData.beatTime) {
         // Guest has already won, display message
         displayGuestWinScreen(startedAt, guestData.beatTime);
         return true;
       }
     }
+    return false;
   }
 
   async function playerStartTime() {
