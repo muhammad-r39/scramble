@@ -19,17 +19,8 @@ function getRandomLetters() {
   return $letters;
 }
 
-$letters = getRandomLetters();
-$boostSlot = rand(1, 7);
-$boostMultiplier = (rand(0, 1) == 0) ? 2 : 3;
-
-if (!isset($words) || !is_array($words)) {
-  die("Error: Word list not found.");
-}
-
 function calculateWordScore($word, $slot, $multiplier) {
   $points = LETTER_POINTS;
-
   $score = 0;
 
   for ($i = 0; $i < strlen($word); $i++) {
@@ -42,10 +33,9 @@ function calculateWordScore($word, $slot, $multiplier) {
 
 function findBestWord($letters, $words, $slot, $multiplier) {
   $result = [
-    'success' => false, 'bestWord' => '', 'highScore' => ''
+    'success' => false, 'bestWord' => '', 'highScore' => 0
   ];
 
-  // Generate all possible permutations of letters from length 1 to 7
   for ($i = 1; $i <= count($letters); $i++) {
     $permutations = generatePermutations($letters, $i);
     foreach ($permutations as $word) {
@@ -59,6 +49,7 @@ function findBestWord($letters, $words, $slot, $multiplier) {
       }
     }
   }
+  
   $result['success'] = true;
   return $result;
 }
@@ -69,10 +60,9 @@ function generatePermutations($letters, $length) {
   foreach ($permutations as $perm) {
     $result[] = implode('', $perm);
   }
-  return array_unique($result); // Avoid duplicate words
+  return array_unique($result);
 }
 
-// Generate all permutations of given length
 function permutations($array, $length) {
   if ($length === 1) {
     return array_map(fn($el) => [$el], $array);
@@ -90,23 +80,33 @@ function permutations($array, $length) {
   return $result;
 }
 
-$result = findBestWord($letters, $words, $boostSlot, $boostMultiplier);
+// Ensure a valid word is found
+$attempts = 0;
+$maxAttempts = 10; // Prevent infinite loops
 
-if ($result['success']) {
+do {
+  $letters = getRandomLetters();
+  $boostSlot = rand(1, 7);
+  $boostMultiplier = (rand(0, 1) == 0) ? 2 : 3;
+
+  if (!isset($words) || !is_array($words)) {
+    die("Error: Word list not found.");
+  }
+
+  $result = findBestWord($letters, $words, $boostSlot, $boostMultiplier);
+  $attempts++;
+
+} while ($result['success'] && strlen($result['bestWord']) < 3 && $attempts < $maxAttempts);
+
+if ($result['success'] && strlen($result['bestWord']) >= 3) {
   $stmt = $pdo->prepare("INSERT INTO game_data (letters, boost_slot, boost_multiplier, high_score, best_word) VALUES (?, ?, ?, ?, ?)");
   $stmt->execute([implode('', $letters), $boostSlot, $boostMultiplier, $result['highScore'], $result['bestWord']]);
 
   try {
     $pdo->beginTransaction();
-
-    // Clear leaderboard table
     $pdo->exec("DELETE FROM leaderboard");
-
-    // Reset user table
     $pdo->exec("UPDATE users SET last_active = NULL, win = 0, beat_time = ''");
-
     $pdo->commit();
-
   } catch (PDOException $e) {
     $pdo->rollBack();
     echo "Error resetting game: " . $e->getMessage();
@@ -114,7 +114,7 @@ if ($result['success']) {
 
   echo "Game data generated successfully!";
 } else {
-  echo "Failed to generate game data!";
+  echo "Failed to generate a valid word after multiple attempts.";
 }
 
 ?>
