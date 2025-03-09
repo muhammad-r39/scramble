@@ -172,14 +172,33 @@ function handleDragOver(e) {
   e.preventDefault();
 }
 
+let dragHistory = [];
+
 function handleDrop(e) {
   e.preventDefault();
+
   let draggedSlotId = e.dataTransfer.getData("text");
   let draggedElement = document.querySelector(
     `[data-letter-index='${draggedSlotId}']`
   );
 
-  placeLetterInEmptySlot(draggedElement);
+  if (!draggedElement) return;
+
+  let emptySlot = [
+    ...document.querySelectorAll(".word-assembly .slot .slot-wrapper"),
+  ].find((slot) => slot.children.length === 0);
+
+  if (emptySlot) {
+    // Save the original slot before moving
+    let originalSlot = draggedElement.closest(".slot");
+
+    emptySlot.appendChild(draggedElement);
+
+    // Store in history with exact original slot reference
+    dragHistory.push({ letter: draggedElement, originalSlot: originalSlot });
+  }
+
+  calculatePointsAndWord();
 }
 
 // Place Letter
@@ -420,4 +439,17 @@ document.getElementById("recall").addEventListener("click", () => {
     });
   currentWord = "";
   updatePlayerScore(0);
+});
+
+// Undo
+document.getElementById("undo").addEventListener("click", () => {
+  if (dragHistory.length === 0) return; // Stop if no history
+
+  let lastMove = dragHistory.pop(); // Get last dragged letter
+
+  if (lastMove && lastMove.originalSlot) {
+    lastMove.originalSlot.appendChild(lastMove.letter); // Move back to original slot
+  }
+  calculatePointsAndWord();
+  updatePlayerScore();
 });

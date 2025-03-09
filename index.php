@@ -11,6 +11,9 @@ require_once 'admin/session.php';
     <link rel="stylesheet" href="./styles.css" />
     <link rel="icon" href="assets/favicon.png" />
     <base href="./">
+    <!-- Load AdSense script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1124471525205689"
+     crossorigin="anonymous"></script>
   </head>
   <body>
     <main>
@@ -62,11 +65,20 @@ require_once 'admin/session.php';
           <div class="action">
             <button id="shuffle">SHUFFLE</button>
             <button id="recall">RECALL</button>
+            <button id="undo">UNDO</button>
           </div>
           <div class="timer">TIMER: <span class="time-count">00</span></div>
         </div>
       </section>
-      <section class="add-space">Ad space</section>
+      <section class="add-space">
+        <!-- Ad unit placeholder -->
+        <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-1124471525205689"
+         data-ad-slot="6542816481"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+      </section>
       <section class="top-players">
         <div class="container">
           <h2>Today's Top 10</h2>
@@ -193,5 +205,8 @@ require_once 'admin/session.php';
     <script src="./scripts/game.js"></script>
     <script src="./scripts/init.js"></script>
     <script src="./scripts/auth.js"></script>
+    <script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
   </body>
 </html>
