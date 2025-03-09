@@ -96,6 +96,7 @@ function addDragEvent(slot) {
   // Desktop Dragging
   letterWrapper.addEventListener("dragstart", (e) => {
     e.dataTransfer.setData("text", e.target.getAttribute("data-letter-index"));
+    // Remove trackDragHistory from here for desktop
   });
 
   // Mobile Touch Dragging
@@ -104,6 +105,21 @@ function addDragEvent(slot) {
     passive: false,
   });
   letterWrapper.addEventListener("touchend", handleTouchEnd);
+}
+
+// Track drag history for both desktop and mobile
+function trackDragHistory(draggedElement) {
+  let originalSlot = draggedElement.closest(".slot");
+
+  // Add debugging to track the history
+  console.log(
+    "Tracking history for element:",
+    draggedElement,
+    "Original Slot:",
+    originalSlot
+  );
+
+  dragHistory.push({ letter: draggedElement, originalSlot: originalSlot });
 }
 
 // Touch Drag Variables
@@ -120,6 +136,7 @@ function handleTouchStart(e) {
     initialY = touch.clientY;
     activeDrag.style.position = "absolute";
     activeDrag.style.zIndex = "1000";
+    trackDragHistory(activeDrag); // Track history for mobile drag
   }
 }
 
@@ -194,7 +211,7 @@ function handleDrop(e) {
 
     emptySlot.appendChild(draggedElement);
 
-    // Store in history with exact original slot reference
+    // Track history here when the letter is actually dropped
     dragHistory.push({ letter: draggedElement, originalSlot: originalSlot });
   }
 
@@ -237,6 +254,53 @@ function displayLetters() {
 
   addDropEvent();
 }
+
+/***************
+ * Game Actions
+ **************/
+
+// Shuffle
+document.getElementById("shuffle").addEventListener("click", () => {
+  if (
+    document.querySelectorAll(".letter-generator .letter-wrapper").length < 7
+  ) {
+    alert("You need to recall first.");
+    return;
+  }
+  displayLetters();
+});
+
+// Recall
+document.getElementById("recall").addEventListener("click", () => {
+  document
+    .querySelectorAll(".word-assembly .letter-wrapper")
+    .forEach((letter) => {
+      const index = letter.getAttribute("data-letter-index");
+      document
+        .querySelectorAll(".letter-generator .slot")
+        [index].appendChild(letter);
+    });
+  currentWord = "";
+  updatePlayerScore(0);
+});
+
+// Undo
+document.getElementById("undo").addEventListener("click", () => {
+  if (dragHistory.length === 0) return; // Stop if no history
+
+  let lastMove = dragHistory.pop(); // Get last dragged letter
+
+  if (lastMove && lastMove.originalSlot) {
+    lastMove.originalSlot.appendChild(lastMove.letter); // Move back to original slot
+  }
+
+  // Debugging to check the state of dragHistory after the first undo
+  console.log("Undo triggered. Drag history length:", dragHistory.length);
+  console.log(dragHistory);
+
+  calculatePointsAndWord();
+  updatePlayerScore();
+});
 
 // Start Timer
 let timerInterval = setInterval(updateTimer, 1000); // Store interval ID
@@ -411,45 +475,3 @@ function createSparkles() {
     setTimeout(() => sparkle.remove(), 5000);
   }
 }
-
-/***************
- * Game Actions
- **************/
-
-// Shuffle
-document.getElementById("shuffle").addEventListener("click", () => {
-  if (
-    document.querySelectorAll(".letter-generator .letter-wrapper").length < 7
-  ) {
-    alert("You need to recall first.");
-    return;
-  }
-  displayLetters();
-});
-
-// Recall
-document.getElementById("recall").addEventListener("click", () => {
-  document
-    .querySelectorAll(".word-assembly .letter-wrapper")
-    .forEach((letter) => {
-      const index = letter.getAttribute("data-letter-index");
-      document
-        .querySelectorAll(".letter-generator .slot")
-        [index].appendChild(letter);
-    });
-  currentWord = "";
-  updatePlayerScore(0);
-});
-
-// Undo
-document.getElementById("undo").addEventListener("click", () => {
-  if (dragHistory.length === 0) return; // Stop if no history
-
-  let lastMove = dragHistory.pop(); // Get last dragged letter
-
-  if (lastMove && lastMove.originalSlot) {
-    lastMove.originalSlot.appendChild(lastMove.letter); // Move back to original slot
-  }
-  calculatePointsAndWord();
-  updatePlayerScore();
-});
