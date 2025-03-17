@@ -15,20 +15,22 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
 $stmt->execute(['user_id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+/*
 $stmt = $pdo->prepare("SELECT * FROM leaderboard ORDER BY time_taken ASC LIMIT 10");
 $stmt->execute();
 $leaderboard = $stmt->fetchAll(PDO::FETCH_ASSOC);
+*/
 
 echo json_encode([
     "success" => true,
     "letters" => str_split($game["letters"]),
-    "highScore" => $game["high_score"],
-    "bestWord" => $game["best_word"],
-    "boost" => ["slot" => $game["boost_slot"], "by" => $game["boost_multiplier"]],
+    "high_score" => $game["high_score"],
+    "best_word" => $game["best_word"],
+    "boost_slot" => $game["boost_slot"],
     "points" => LETTER_POINTS,
     "started_at" => $game['created_at'],
     "user" => $user,
-    "leaderboard" => $leaderboard
+    // "leaderboard" => $leaderboard
 ]);
 
 ?>

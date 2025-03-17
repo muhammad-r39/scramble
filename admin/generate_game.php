@@ -105,7 +105,7 @@ if ($result['success'] && strlen($result['bestWord']) >= 3) {
   try {
     $pdo->beginTransaction();
     $pdo->exec("DELETE FROM leaderboard");
-    $pdo->exec("UPDATE users SET last_active = NULL, win = 0, beat_time = ''");
+    $pdo->exec("UPDATE users SET win = 0");
     $pdo->commit();
   } catch (PDOException $e) {
     $pdo->rollBack();

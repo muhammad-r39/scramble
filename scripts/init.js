@@ -4,163 +4,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await fetch("admin/get_game.php", { method: "POST" });
       const result = await response.json();
 
-      if (result.success) {
-        const game = {
-          boost: result.boost,
-          highScore: result.highScore,
-          letters: result.letters,
-          points: result.points,
-          bestWord: result.bestWord,
-          startedAt: result.started_at,
-        };
-
-        // Store in global scope
-        window.leaderboard = result.leaderboard;
-        window.user = result.user
-          ? result.user
-          : {
-              guest: true,
-            };
-        window.user.started_at = new Date();
-
-        if (!result.user && checkGuestWinStatus(result.started_at)) {
-          return;
-        } else if (result.user.win > 0) {
-          const gameContainer = document.querySelector("#game .container");
-          gameContainer.innerHTML = `
-            <div class="headline">
-              <h2>🎉 Congratulations! 🎉</h2>
-              <h3>You have won! You beat the game in: ${result.user.beat_time}</h3>
-              <p>Please wait for next round to start!</p>
-              <p class="next-round">00:00:00</p>
-            </div>
-          `;
-
-          countdown(result.started_at);
-
-          return;
-        }
-
-        window.game = game;
-
-        window.game.startTime = new Date(await playerStartTime());
-
-        // Initialize the game AFTER the data is fully loaded
-        initializeGame();
-      } else {
+      if (!result.success) {
         alert("Server Error: Unable to load game data.");
+        return;
       }
+      const game = {
+        boostSlot: result.boost_slot,
+        highScore: result.high_score,
+        bestWord: result.best_word,
+        letters: result.letters,
+        points: result.points,
+        startedAt: result.started_at,
+      };
+
+      window.user = result.user || { guest: true };
+
+      if (!result.user && checkGuestWinStatus(game.startedAt)) {
+        return;
+      } else if (result.user.win > 0) {
+        displayHintsUsed();
+
+        return;
+      }
+
+      window.game = game;
+
+      initializeGame();
     } catch (error) {
       console.error("Error fetching game data:", error);
-    }
-  }
-
-  function displayGuestWinScreen(started_at, beat_time) {
-    const gameContainer = document.querySelector("#game .container");
-    gameContainer.innerHTML = `
-            <div class="headline">
-              <h2>🎉 Congratulations! 🎉</h2>
-              <h3>You have won! You beat the game in: ${beat_time}</h3>
-              <p>Please wait for next round to start!</p>
-              <p class="next-round">00:00:00</p>
-              <span class="btn-save">Save Your Win</span>
-            </div>
-          `;
-    document.querySelector(".btn-save").addEventListener("click", () => {
-      document.querySelector("#loginModal").style.display = "block";
-    });
-    countdown(started_at);
-  }
-
-  function checkGuestWinStatus(startedAt) {
-    let guestData = localStorage.getItem("guestGameData");
-    if (guestData) {
-      guestData = JSON.parse(guestData);
-      if (guestData.startTime < startedAt) {
-        localStorage.removeItem("guestGameData");
-        return;
-      } else if (guestData.beatTime) {
-        // Guest has already won, display message
-        displayGuestWinScreen(startedAt, guestData.beatTime);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  async function playerStartTime() {
-    let newStartTime = new Date();
-    if (!window.user) {
-      // Check if a guest user's game data exists
-      let guestData = localStorage.getItem("guestGameData");
-
-      if (guestData) {
-        guestData = JSON.parse(guestData);
-
-        // Check if the saved time is older than the game reset time
-        if (guestData.startTime < window.game.startedAt) {
-          localStorage.removeItem("guestGameData"); // Remove expired data
-        } else {
-          return new Date(guestData.startTime); // Return saved time
-        }
-      }
-
-      // No valid saved time, so store a new one
-      localStorage.setItem(
-        "guestGameData",
-        JSON.stringify({
-          startTime: newStartTime.getTime(),
-          expiresAt: newStartTime.getTime() + 24 * 60 * 60 * 1000, // 24-hour expiration
-        })
-      );
-    }
-    /*
-    // For logged-in users
-    let lastActiveTime = window.user.last_active;
-
-    if (!lastActiveTime || lastActiveTime < window.game.startedAt) {
-      lastActiveTime = await updatePlayerActiveTime();
-    }
-    */
-
-    return newStartTime;
-  }
-
-  async function updatePlayerActiveTime() {
-    const data = {
-      action: "updatePlayerStartTime",
-    };
-    const response = await fetch("admin/update.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await response.json();
-    if (result.success) {
-      return result.start_time;
-    }
-  }
-
-  function initializeGame() {
-    const win = true;
-    if (win) {
-      processHintsUsed();
-    } else {
-      // Set Boost Slot
-      document
-        .querySelector(
-          `.word-assembly [data-slot-id='${window.game.boost.slot}']`
-        )
-        .setAttribute("data-boost-by", window.game.boost.by);
-
-      // Set High Score
-      document.querySelector(".highest-score").textContent =
-        window.game.highScore;
-
-      // Display Letters
-      displayLetters();
     }
   }
 
@@ -172,3 +43,55 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Hide loading screen once data is ready
   document.querySelector(".loading-screen").style.display = "none";
 });
+
+// Process Hints Used
+function displayHintsUsed() {}
+
+// Guest Win Status
+function checkGuestWinStatus(gameStarted) {
+  let guestData = localStorage.getItem("letterleyGuest");
+
+  if (!guestData) {
+    return false;
+  }
+
+  let guest = JSON.parse(guestData);
+
+  if (guest.started < gameStarted) {
+    localStorage.removeItem("letterleyGuest");
+    return false;
+  }
+
+  if (guest.won) {
+    const gameContainer = document.querySelector("#game .container");
+    gameContainer.innerHTML = `
+            <div class="headline">
+              <h2>🎉 Congratulations! 🎉</h2>
+              <h3>You have found todays best word!</h3>
+              <span class="btn-save">Save Your Win</span>
+            </div>
+          `;
+    document.querySelector(".btn-save").addEventListener("click", () => {
+      document.querySelector("#loginModal").style.display = "block";
+    });
+
+    // guest won, no need to initialize the game
+    return true;
+  }
+
+  return false;
+}
+
+// Initiate Game
+function initializeGame() {
+  // Set Boost Slot
+  document
+    .querySelectorAll(`.word-assembly .slot`)
+    [window.game.boostSlot - 1].setAttribute("boosted", true);
+
+  // Set High Score
+  document.querySelector(".highest-score").textContent = window.game.highScore;
+
+  // Display Letters
+  displayLetters();
+}

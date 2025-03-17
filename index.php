@@ -27,7 +27,7 @@ require_once 'admin/session.php';
           </div>
         </div>
       </section>
-<!--       
+
       <section id="game">
         <div class="container">
           <div class="scores">
@@ -39,7 +39,7 @@ require_once 'admin/session.php';
           </div>
           <div class="slot-wrapper word-assembly">
             <div class="slot"></div>
-            <div class="slot" boosted></div>
+            <div class="slot"></div>
             <div class="slot"></div>
             <div class="slot"></div>
             <div class="slot"></div>
@@ -47,12 +47,7 @@ require_once 'admin/session.php';
             <div class="slot"></div>
           </div>
           <div class="slot-wrapper letter-generator">
-            <div class="slot">
-              <div class="letter-wrapper">
-                <span class="letter">A</span>
-                <span class="point">2</span>
-              </div>
-            </div>
+            <div class="slot"></div>
             <div class="slot"></div>
             <div class="slot"></div>
             <div class="slot"></div>
@@ -65,9 +60,9 @@ require_once 'admin/session.php';
             <button id="hint">HINT</button>
           </div>
         </div>
-      </section> -->
+      </section>
 
-      <section id="gameScore">
+      <section id="gameScore" style="display: none">
         <div class="container">
           <div class="states-wrapper">
             <div class="states">
@@ -244,6 +239,7 @@ require_once 'admin/session.php';
     <script src="./scripts/main.js"></script>
     <script src="./scripts/game.js"></script>
     <script src="./scripts/init.js"></script>
+    <script src="./scripts/dragndrop.js"></script>
     <script src="./scripts/auth.js"></script>
     <script>
      // (adsbygoogle = window.adsbygoogle || []).push({});
