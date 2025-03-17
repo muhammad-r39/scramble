@@ -2,7 +2,7 @@
 require_once 'session.php';
 
 $db_host = 'localhost';
-$db_name = 'scramble';
+$db_name = 'letterley';
 $db_user = 'root';
 $db_pass = '';
 

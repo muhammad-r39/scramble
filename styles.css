@@ -3,7 +3,7 @@
   font-display: swap;
   font-weight: 400;
   font-style: normal;
-  src: url(./assets/CanvaSans-Regular.woff2) format("woff2");
+  src: url("./assets/CanvaSans-Regular.woff2") format("woff2");
 }
 
 @font-face {
@@ -11,7 +11,15 @@
   font-display: swap;
   font-weight: 700;
   font-style: normal;
-  src: url(./assets/CanvaSans-Bold.woff2) format("woff2");
+  src: url("./assets/CanvaSans-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Leckerli One";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./assets/leckerli-one-v20-latin-regular.woff2") format("woff2");
 }
 
 * {
@@ -24,7 +32,6 @@ body {
   margin: 0;
   min-width: 20rem;
   font-family: "CanvaSans", sans-serif;
-  background-color: #ffc8ea;
   color: #000;
 }
 
@@ -38,18 +45,36 @@ main {
   width: 860px;
   max-width: 100%;
   margin: auto;
-  padding: 30px;
+  padding: 0 30px;
   text-align: center;
+}
+
+#header {
+  padding-top: 30px;
 }
 
 .headline h1 {
   margin: 0;
-  font-size: 60px;
+  font-family: "Leckerli One";
+  font-size: 90px;
+  font-weight: 400;
+}
+
+.headline h3 {
+  color: #ebebeb;
+  font-size: 22px;
+  font-weight: 400;
+  margin: 1rem 0 0;
+}
+
+.headline h3 span {
+  font-family: "Leckerli One";
 }
 
 .headline p {
   font-size: 20px;
   margin: 10px 0;
+  font-family: "CanvaSans", sans-serif;
 }
 
 .scores {
@@ -58,7 +83,7 @@ main {
   align-items: center;
   justify-content: center;
   margin: 4rem auto 3rem;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
 }
 
@@ -70,8 +95,8 @@ main {
 .progress-bar {
   position: relative;
   width: 400px;
-  height: 1rem;
-  background-color: #fff;
+  height: 0.875rem;
+  background-color: #d4d4d4;
   max-width: 100%;
 }
 
@@ -88,12 +113,12 @@ main {
 
 .invalid .progress-bar::before {
   content: "Not a valid word!";
-  color: #e91e63;
+  color: #dfb1cf;
 }
 
 .processing .progress-bar::before {
   content: "Validating...";
-  color: #8f5f7e;
+  color: #dfb1cf;
 }
 
 .progress-bar .progress {
@@ -102,85 +127,65 @@ main {
   left: 0;
   width: 0%;
   height: 100%;
-  background-color: #8f5f7e;
+  background-color: #000;
   transition: all 0.5s ease-out;
 }
 
 .invalid .progress-bar .progress {
   opacity: 0.8;
-  background-color: #e91e63;
+  background-color: #000;
 }
 
-.word-assembly,
-.letter-generator {
+.slot-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
   margin-bottom: 3rem;
+  user-select: none;
 }
 
 .slot {
   position: relative;
-  width: 120px;
-  height: 130px;
-  padding: 10px;
-}
-
-.word-assembly .slot-wrapper {
-  padding: 10px;
-  background-color: #8f5f7e;
-  width: 100%;
-  height: 100%;
+  width: 84px;
+  height: 110px;
+  border: 3px solid #000000;
+  border-radius: 10px;
 }
 
 .word-assembly .slot {
   background-color: #fff;
 }
 
-.word-assembly .slot[data-boost-by] {
-  border: 2px solid #333;
-  height: 174px;
-  padding: 30px 7px;
-}
-
-.word-assembly .slot[data-boost-by]::before {
+.word-assembly .slot[boosted]::before {
+  content: "Ly";
   position: absolute;
   left: 0;
   right: 0;
-  top: 5px;
-}
-
-.word-assembly .slot[data-boost-by="2"]::before {
-  content: "DOUBLE";
-}
-
-.word-assembly .slot[data-boost-by="3"]::before {
-  content: "TRIPLE";
-}
-
-.word-assembly .slot[data-boost-by]::after {
-  content: "POINT";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 5px;
-}
-
-.letter-generator .slot {
-  border: 10px solid #fff;
-  background-color: #8f5f7e;
-}
-
-.letter-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #d4d4d4;
+  font-family: "Leckerli One";
+  font-size: 53px;
+  color: #ebebeb;
+}
+
+.letter-generator .slot {
+  background-color: #ebebeb;
+}
+
+.letter-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #dfb1cf;
   color: #fff;
-  font-size: 54px;
-  font-weight: 700;
+  border-radius: 6px;
   cursor: grab;
 }
 
@@ -188,16 +193,17 @@ main {
   cursor: grabbing;
 }
 
-.word-assembly .letter-wrapper {
-  cursor: initial;
+.letter-wrapper .letter {
+  font-size: 70px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .letter-wrapper .point {
-  position: absolute;
-  font-size: 10px;
-  bottom: 10px;
-  right: 10px;
+  font-size: 14px;
   font-weight: 400;
+  line-height: 1;
+  transform: translateY(6px);
 }
 
 .action {
@@ -210,25 +216,29 @@ main {
 }
 
 .action button {
-  background-color: #ffffff;
-  padding: 15px;
+  position: relative;
+  width: 130px;
+  font-size: 18px;
+  line-height: 1;
+  padding: 14px;
+  background-color: #d4d4d4;
   border: none;
   cursor: pointer;
-  width: 110px;
+  z-index: 1;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.timer {
-  font-weight: 700;
-  font-size: 36px;
-  margin-bottom: 2rem;
+.action button:hover {
+  background-color: #dfb1cf;
 }
 
 .add-space {
+  flex: 1;
   width: 100%;
   max-width: 100%;
   height: 80px;
-  background-color: #fff;
-  margin: 0 auto 1.5rem;
+  background-color: #d4d4d4;
   text-align: center;
 }
 
@@ -602,8 +612,9 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(255 200 234);
+  background-color: #fff;
   color: #000;
+  font-family: "Leckerli One";
   display: flex;
   justify-content: center;
   align-items: center;
@@ -611,31 +622,102 @@ main {
   z-index: 9999;
 }
 
+#gameScore {
+  padding: 50px 0 80px;
+}
+
+.states-wrapper {
+  padding: 40px 30px;
+  background-color: #ebebeb;
+}
+
+.states {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 50px;
+}
+
+.count-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.count-wrapper .count {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.count-wrapper .count-type {
+  font-size: 18px;
+}
+
+.hints-used {
+  text-align: center;
+}
+
+.hints-used p {
+  font-size: 18px;
+}
+
+.hints-used ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  width: 360px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hints-used ul li {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.hints-number {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.hints-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 14px;
+}
+
+.hints-bar .bar {
+  height: 100%;
+  min-width: 10px;
+  background-color: #000;
+}
+
+.hints-bar::after {
+  content: attr(data-hints-used);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.active .hints-bar .bar {
+  background-color: #dfb1cf;
+}
+
 @media screen and (max-width: 1200px) {
   .container {
     width: 700px;
   }
   .headline h1 {
-    font-size: 50px;
+    font-size: 80px;
   }
   .headline p {
     font-size: 18px;
   }
   .scores {
     margin: 2rem auto 2rem;
-  }
-  .slot {
-    height: 110px;
-  }
-  .letter-wrapper {
-    font-size: 44px;
-  }
-  .word-assembly .slot[data-boost-by] {
-    height: 156px;
-  }
-  .word-assembly .slot[data-boost-by]::before,
-  .word-assembly .slot[data-boost-by]::after {
-    font-size: 12px;
   }
   .word-assembly,
   .letter-generator {
@@ -671,46 +753,26 @@ main {
 
 @media screen and (max-width: 640px) {
   .container {
-    padding: 30px 20px;
-  }
-  .slot {
-    height: 70px;
-    padding: 5px;
-  }
-  .word-assembly .slot-wrapper {
-    padding: 5px;
-  }
-  .letter-generator .slot {
-    width: 70px;
-    height: 70px;
-    border-width: 5px;
-  }
-  .letter-wrapper {
-    font-size: 34px;
-  }
-  .letter-wrapper .point {
-    bottom: 2px;
-    right: 2px;
-  }
-  .word-assembly .slot[data-boost-by] {
-    height: 104px;
-    padding: 20px 5px;
-  }
-  .word-assembly .slot[data-boost-by]::before,
-  .word-assembly .slot[data-boost-by]::after {
-    font-size: 10px;
+    padding: 0 20px;
   }
   .scores {
     font-size: 30px;
     margin: 2rem auto;
   }
-  .word-assembly,
-  .letter-generator {
+  .slot-wrapper {
     margin-bottom: 1rem;
   }
-  .timer {
-    font-size: 20px;
-    margin-bottom: 1rem;
+  .slot {
+    height: 80px;
+  }
+  .word-assembly .slot[boosted]::before {
+    font-size: 30px;
+  }
+  .letter-wrapper .letter {
+    font-size: 50px;
+  }
+  .letter-wrapper .point {
+    transform: none;
   }
   .action {
     margin-top: 3rem;
@@ -729,11 +791,53 @@ main {
   .sparkle-screen .headline h2 {
     font-size: 22px;
   }
+  #gameScore {
+    padding: 50px 0;
+  }
+  .states-wrapper {
+    padding: 30px 20px;
+  }
+  .count-wrapper .count,
+  .hints-number {
+    font-size: 32px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .slot-wrapper {
+    gap: 6px;
+  }
+  .slot {
+    height: 60px;
+    border-width: 2px;
+  }
+  .word-assembly .slot[boosted]::before {
+    font-size: 24px;
+  }
+  .letter-wrapper .letter {
+    font-size: 38px;
+  }
+  .letter-wrapper .point {
+    font-size: 12px;
+  }
+  .states {
+    margin-bottom: 30px;
+  }
+  .count-wrapper .count,
+  .hints-number {
+    font-size: 28px;
+  }
+  .hints-used p,
+  .count-wrapper .count-type {
+    font-size: 16px;
+  }
 }
 
 @media screen and (max-width: 400px) {
+  #header {
+    padding-top: 10px;
+  }
   .headline h1 {
-    font-size: 40px;
+    font-size: 70px;
   }
   .sparkle-screen .headline h1 {
     font-size: 24px;
@@ -749,38 +853,21 @@ main {
     font-size: 24px;
     margin: 2rem auto 1.5rem;
   }
+  .progress-bar {
+    height: 0.625rem;
+  }
+  .slot-wrapper {
+    margin-bottom: 1rem;
+    gap: 4px;
+  }
   .slot {
     height: 50px;
   }
-  .letter-generator .slot {
-    height: 50px;
-    border-width: 5px;
-  }
-  .word-assembly .slot[data-boost-by] {
-    height: 78px;
-    padding: 16px 3px;
-  }
-  .word-assembly .slot[data-boost-by]::before,
-  .word-assembly .slot[data-boost-by]::after {
-    font-size: 7px;
-  }
-  .word-assembly .slot[data-boost-by]::before {
-    top: 4px;
-  }
-  .word-assembly .slot[data-boost-by]::after {
-    bottom: 4px;
-  }
-  .letter-wrapper {
+  .word-assembly .slot[boosted]::before {
     font-size: 20px;
-    align-items: flex-start;
   }
-  .letter-wrapper .point {
-    bottom: 1px;
-    right: 1px;
-  }
-  .word-assembly,
-  .letter-generator {
-    margin-bottom: 1rem;
+  .letter-wrapper .letter {
+    font-size: 32px;
   }
   .action {
     margin-top: 2rem;
@@ -788,5 +875,22 @@ main {
   }
   .action button {
     font-size: 12px;
+  }
+  .hints-used ul li {
+    gap: 10px;
+  }
+  .count-wrapper {
+    flex-basis: 25%;
+  }
+  .count-wrapper .count,
+  .hints-number {
+    font-size: 24px;
+  }
+  .hints-used p,
+  .count-wrapper .count-type {
+    font-size: 14px;
+  }
+  .hints-bar .bar {
+    min-width: 7px;
   }
 }

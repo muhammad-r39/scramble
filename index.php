@@ -7,22 +7,29 @@ require_once 'admin/session.php';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SCRAMBLE | Word Game</title>
+    <title>Letterley | Word Game</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="icon" href="assets/favicon.png" />
     <base href="./">
-    <!-- Load AdSense script -->
+    <!-- Load AdSense script 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1124471525205689"
      crossorigin="anonymous"></script>
+     -->
   </head>
   <body>
     <main>
-      <section id="game">
+      <section id="header">
         <div class="container">
           <div class="headline">
-            <h1>SCRAMBLE</h1>
+            <h1>Letterley</h1>
             <p>Find today’s highest point word</p>
+            <h3><span>Ly</span> = triple the points!</h3>
           </div>
+        </div>
+      </section>
+<!--       
+      <section id="game">
+        <div class="container">
           <div class="scores">
             <span class="player-score">0</span>
             <span class="progress-bar">
@@ -30,31 +37,22 @@ require_once 'admin/session.php';
             </span>
             <span class="highest-score">0</span>
           </div>
-          <div class="word-assembly">
-            <div class="slot" data-slot-id="1">
-              <div class="slot-wrapper"></div>
-            </div>
-            <div class="slot" data-slot-id="2">
-              <div class="slot-wrapper"></div>
-            </div>
-            <div class="slot" data-slot-id="3">
-              <div class="slot-wrapper"></div>
-            </div>
-            <div class="slot" data-slot-id="4">
-              <div class="slot-wrapper"></div>
-            </div>
-            <div class="slot" data-slot-id="5">
-              <div class="slot-wrapper"></div>
-            </div>
-            <div class="slot" data-slot-id="6">
-              <div class="slot-wrapper"></div>
-            </div>
-            <div class="slot" data-slot-id="7">
-              <div class="slot-wrapper"></div>
-            </div>
-          </div>
-          <div class="letter-generator">
+          <div class="slot-wrapper word-assembly">
             <div class="slot"></div>
+            <div class="slot" boosted></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+          </div>
+          <div class="slot-wrapper letter-generator">
+            <div class="slot">
+              <div class="letter-wrapper">
+                <span class="letter">A</span>
+                <span class="point">2</span>
+              </div>
+            </div>
             <div class="slot"></div>
             <div class="slot"></div>
             <div class="slot"></div>
@@ -64,10 +62,80 @@ require_once 'admin/session.php';
           </div>
           <div class="action">
             <button id="shuffle">SHUFFLE</button>
-            <button id="recall">RECALL</button>
-            <button id="undo">UNDO</button>
+            <button id="hint">HINT</button>
           </div>
-          <div class="timer">TIMER: <span class="time-count">00</span></div>
+        </div>
+      </section> -->
+
+      <section id="gameScore">
+        <div class="container">
+          <div class="states-wrapper">
+            <div class="states">
+              <div class="played-count count-wrapper">
+                <span class="count">36</span>
+                <span class="count-type">Played</span>
+              </div>
+              <div class="win-count count-wrapper">
+                <span class="count">92</span>
+                <span class="count-type">Win %</span>
+              </div>
+              <div class="streak-count count-wrapper">
+                <span class="count">4</span>
+                <span class="count-type">Current Streak</span>
+              </div>
+              <div class="max-streak count-wrapper">
+                <span class="count">64</span>
+                <span class="count-type">Max Streak</span>
+              </div>
+            </div>
+            <div class="hints-used">
+              <p>Hints used to solve</p>
+              <ul>
+                <li>
+                  <span class="hints-number">0</span>
+                  <span class="hints-bar" data-hints-used="16">
+                    <span class="bar"></span>
+                  </span>
+                </li>
+                <li class="active">
+                  <span class="hints-number">1</span>
+                  <span class="hints-bar" data-hints-used="22">
+                    <span class="bar"></span>
+                  </span>
+                </li>
+                <li>
+                  <span class="hints-number">2</span>
+                  <span class="hints-bar" data-hints-used="12">
+                    <span class="bar"></span>
+                  </span>
+                </li>
+                <li>
+                  <span class="hints-number">3</span>
+                  <span class="hints-bar" data-hints-used="4">
+                    <span class="bar"></span>
+                  </span>
+                </li>
+                <li>
+                  <span class="hints-number">4</span>
+                  <span class="hints-bar" data-hints-used="2">
+                    <span class="bar"></span>
+                  </span>
+                </li>
+                <li>
+                  <span class="hints-number">5</span>
+                  <span class="hints-bar" data-hints-used="0">
+                    <span class="bar"></span>
+                  </span>
+                </li>
+                <li>
+                  <span class="hints-number">6</span>
+                  <span class="hints-bar" data-hints-used="0">
+                    <span class="bar"></span>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
       <section class="add-space">
@@ -78,34 +146,6 @@ require_once 'admin/session.php';
          data-ad-slot="6542816481"
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>
-      </section>
-      <section class="top-players">
-        <div class="container">
-          <h2>Today's Top 10</h2>
-          <table id="topPlayers">
-            <thead>
-              <tr>
-                <th class="position">No</th>
-                <th class="name">Player Name</th>
-                <th class="best-time">Best Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              
-            </tbody>
-          </table>
-          <?php if (!isset($_SESSION['user_id'])) { ?>
-          <div class="cta">
-            <span class="btn-join btn-login">Join Now</span>
-          </div>
-            <?php } ?>
-          <div class="top-player-message">
-            Be the first one to beat the high score.
-          </div>
-        </div>
-        <?php if (isset($_SESSION['user_id'])) { ?>
-          <span class="btn-logout">Logout</span>
-        <?php } ?>
       </section>
     </main>
     <div class="modal" id="registerModal">
@@ -199,14 +239,14 @@ require_once 'admin/session.php';
       </div>
     </div>
     <div class="loading-screen">
-      <p>Loading</p>
+      <p>Loading...</p>
     </div>
     <script src="./scripts/main.js"></script>
     <script src="./scripts/game.js"></script>
     <script src="./scripts/init.js"></script>
     <script src="./scripts/auth.js"></script>
     <script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
+     // (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
   </body>
 </html>

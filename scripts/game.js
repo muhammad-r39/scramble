@@ -1,3 +1,4 @@
+/*
 let currentWord = "";
 let validScore = false;
 
@@ -86,9 +87,6 @@ function calculatePointsAndWord() {
     });
 }
 
-/*****************
- * Player Actions
- ****************/
 // Drag
 function addDragEvent(slot) {
   const letterWrapper = slot.querySelector(".letter-wrapper");
@@ -255,10 +253,6 @@ function displayLetters() {
   addDropEvent();
 }
 
-/***************
- * Game Actions
- **************/
-
 // Shuffle
 document.getElementById("shuffle").addEventListener("click", () => {
   if (
@@ -270,87 +264,8 @@ document.getElementById("shuffle").addEventListener("click", () => {
   displayLetters();
 });
 
-// Recall
-document.getElementById("recall").addEventListener("click", () => {
-  document
-    .querySelectorAll(".word-assembly .letter-wrapper")
-    .forEach((letter) => {
-      const index = letter.getAttribute("data-letter-index");
-      document
-        .querySelectorAll(".letter-generator .slot")
-        [index].appendChild(letter);
-    });
-  currentWord = "";
-  updatePlayerScore(0);
-});
-
-// Undo
-document.getElementById("undo").addEventListener("click", () => {
-  if (dragHistory.length === 0) return; // Stop if no history
-
-  let lastMove = dragHistory.pop(); // Get last dragged letter
-
-  if (lastMove && lastMove.originalSlot) {
-    lastMove.originalSlot.appendChild(lastMove.letter); // Move back to original slot
-  }
-
-  // Debugging to check the state of dragHistory after the first undo
-  console.log("Undo triggered. Drag history length:", dragHistory.length);
-  console.log(dragHistory);
-
-  calculatePointsAndWord();
-  updatePlayerScore();
-});
-
-// Start Timer
-let timerInterval = setInterval(updateTimer, 1000); // Store interval ID
-
-function updateTimer() {
-  let elapsed = Math.floor((Date.now() - window.user.started_at) / 1000);
-  let hours = Math.floor(elapsed / 3600);
-  let minutes = Math.floor((elapsed - hours * 3600) / 60);
-  let seconds = elapsed - hours * 3600 - minutes * 60;
-
-  let timeString =
-    hours.toString().padStart(2, "0") +
-    ":" +
-    minutes.toString().padStart(2, "0") +
-    ":" +
-    seconds.toString().padStart(2, "0");
-
-  const timeCount = document.querySelector(".time-count");
-  if (timeCount) timeCount.textContent = timeString;
-}
-
-function countdown(time) {
-  const countDownDate = new Date(
-    new Date(time).getTime() + 60 * 60 * 24 * 1000
-  );
-
-  // Update the count down every 1 second
-  const x = setInterval(function () {
-    const distance = countDownDate - new Date().getTime();
-    const hours = Math.floor(
-      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.querySelectorAll(".next-round").forEach((target) => {
-      target.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
-    });
-
-    if (distance < 0) {
-      clearInterval(x);
-      // location.reload();
-    }
-  }, 1000);
-}
-
 // Win function with sparkle effect
 function sparkle() {
-  clearInterval(timerInterval); // Stop the timer
-
   const registerModal = document.querySelector("#registerModal");
   const beatTime = document.querySelector(".time-count").textContent;
 
@@ -401,37 +316,6 @@ function sparkle() {
   }
 }
 
-function processGuestWin(beatTime) {
-  const score = window.game.highScore;
-  localStorage.setItem(
-    "guestGameData",
-    JSON.stringify({
-      score: score,
-      beatTime: beatTime,
-      startTime: window.game.startedAt,
-    })
-  );
-}
-
-async function processLoggedUser(beatTime) {
-  const data = {
-    action: "updatePlayerWin",
-    beatTime: beatTime,
-    score: window.game.highScore,
-  };
-  const response = await fetch("admin/update.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  const result = await response.json();
-  if (result.success) {
-    // console.log(result);
-  }
-}
-
 // Sparkle effect function
 function createSparkles() {
   const sparkleScreen = document.querySelector(".sparkle-screen");
@@ -474,4 +358,40 @@ function createSparkles() {
     // Remove after animation
     setTimeout(() => sparkle.remove(), 5000);
   }
+}
+
+function processGuestWin(beatTime) {
+  const score = window.game.highScore;
+  localStorage.setItem(
+    "guestGameData",
+    JSON.stringify({
+      score: score,
+      beatTime: beatTime,
+      startTime: window.game.startedAt,
+    })
+  );
+}
+
+async function processLoggedUser(beatTime) {
+  const data = {
+    action: "updatePlayerWin",
+    beatTime: beatTime,
+    score: window.game.highScore,
+  };
+  const response = await fetch("admin/update.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (result.success) {
+    // console.log(result);
+  }
+}
+*/
+// Process Hints Used
+function processHintsUsed() {
+  console.log("ok");
 }

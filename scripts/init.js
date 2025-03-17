@@ -144,50 +144,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function initializeGame() {
-    // Set Boost Slot
-    document
-      .querySelector(
-        `.word-assembly [data-slot-id='${window.game.boost.slot}']`
-      )
-      .setAttribute("data-boost-by", window.game.boost.by);
+    const win = true;
+    if (win) {
+      processHintsUsed();
+    } else {
+      // Set Boost Slot
+      document
+        .querySelector(
+          `.word-assembly [data-slot-id='${window.game.boost.slot}']`
+        )
+        .setAttribute("data-boost-by", window.game.boost.by);
 
-    // Set High Score
-    document.querySelector(".highest-score").textContent =
-      window.game.highScore;
+      // Set High Score
+      document.querySelector(".highest-score").textContent =
+        window.game.highScore;
 
-    // Display Letters
-    displayLetters();
+      // Display Letters
+      displayLetters();
+    }
   }
 
   // Show loading screen while waiting for data
   document.querySelector(".loading-screen").style.display = "flex";
 
   await getGameInitData();
-
-  const topPlayers = document.querySelector("#topPlayers tbody");
-
-  const leaderboard = Object.entries(window.leaderboard);
-
-  let topPlayerList = "";
-
-  if (leaderboard.length < 1) {
-    topPlayerList += `
-      <tr>
-        <td colspan="3">Be the first</td>
-      </tr>`;
-  }
-
-  leaderboard.forEach((player, index) => {
-    topPlayerList += `
-  <tr>
-    <td>${index + 1}</td>
-    <td>${player[1].fullname}</td>
-    <td>${player[1].time_taken}</td>
-  </tr>`;
-  });
-
-  topPlayers.innerHTML = topPlayerList;
-  // document.querySelector("#topPlayers tbody").innerHTML;
 
   // Hide loading screen once data is ready
   document.querySelector(".loading-screen").style.display = "none";
