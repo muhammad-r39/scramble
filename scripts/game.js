@@ -1,5 +1,8 @@
-function displayLetters() {
-  window.game.letters.sort(() => Math.random() - 0.5);
+function displayLetters(shuffle = true) {
+  if (shuffle) {
+    window.game.letters.sort(() => Math.random() - 0.5);
+  }
+
   const letterSlots = document.querySelectorAll(".letter-generator .slot");
 
   letterSlots.forEach((slot, index) => {
@@ -31,7 +34,233 @@ function displayLetters() {
   }
 }
 
+let currentWord = "";
+let validScore = false;
+
+async function validateWord() {
+  const scores = document.querySelector(".scores");
+  const playerScore = document.querySelector(".player-score");
+
+  if (!playerScore) {
+    return false;
+  }
+
+  if (currentWord.length === 0) {
+    return false;
+  }
+
+  scores.classList.add("processing");
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  try {
+    let response = await fetch("word-engine/output/words.json.php");
+
+    if (!response.ok) {
+      console.error("Failed to load dictionary");
+      return false;
+    }
+
+    let words = await response.json();
+
+    return words.hasOwnProperty(currentWord.toLowerCase());
+  } catch (error) {
+    console.error("Error validating word:", error);
+    return false;
+  } finally {
+    scores.classList.remove("processing");
+  }
+}
+
+async function updatePlayerScore(score = playerScore) {
+  const scores = document.querySelector(".scores");
+  const playerScore = document.querySelector(".player-score");
+  const progress = document.querySelector(".progress-bar .progress");
+
+  if (score > 0) {
+    scores.classList.add("invalid");
+    validScore = false;
+    if (await validateWord()) {
+      scores.classList.remove("invalid");
+      validScore = true;
+    } else {
+      scores.classList.add("invalid");
+      validScore = false;
+    }
+  } else {
+    scores.classList.remove("invalid");
+    validScore = true;
+  }
+
+  if (validScore) {
+    playerScore.textContent = score;
+    const progressPercent = (score * 100) / window.game.highScore;
+    progress.style.width = `${progressPercent}%`;
+  }
+
+  if (validScore && score === window.game.highScore) {
+    sparkle();
+  }
+}
+
+// Calculate Points
+function calculatePointsAndWord() {
+  playerScore = 0;
+  currentWord = "";
+
+  document
+    .querySelectorAll(".word-assembly .letter-wrapper")
+    .forEach((letter) => {
+      const point = parseInt(letter.querySelector(".point").textContent);
+      currentWord += letter.querySelector(".letter").textContent.toLowerCase();
+
+      const multiplier = letter.closest(".slot").hasAttribute("boosted")
+        ? 3
+        : 1;
+
+      playerScore += point * parseInt(multiplier);
+
+      updatePlayerScore();
+    });
+}
+
+function sparkle() {
+  if (document.querySelector(".sparkle-screen")) {
+    return;
+  }
+
+  const registerModal = document.querySelector("#registerModal");
+
+  const win = document.createElement("div");
+  win.classList.add("sparkle-screen");
+
+  if (window.user.guest) {
+    win.innerHTML = `
+    <div class="sparkle-container">
+      <h2>🎉 Congratulations! 🎉</h2>
+      <h3>You have found today's highest point word.</h3>
+      <p>Login or register to save your progress.</p>
+      <span class="btn-link btn-register">Register</span>
+    </div>
+  `;
+  } else {
+    win.classList.add("darker");
+    win.innerHTML = `
+            <div class="headline">
+              <h2>🎉 Congratulations! 🎉</h2>
+              <h3>You have won! You beat the game in: ${beatTime}</h3>
+              <p>Please wait for next round to start!</p>
+              <span class="btn btn-leaderboard" onclick="location.reload()">See Leaderboard</span>
+            </div>
+          `;
+  }
+  document.querySelector("body").appendChild(win);
+
+  document.querySelectorAll(".btn-register").forEach((btn) => {
+    // btn.addEventListener("click", () => {
+    //   if (registerModal) {
+    //     registerModal.style.display = "block";
+    //   }
+    // });
+  });
+
+  // Add sparkle effect
+  createSparkles();
+  /*
+  if (window.user.guest) {
+    console.log("guest");
+    processGuestWin(beatTime);
+  } else {
+    processLoggedUser(beatTime);
+  }
+  */
+}
+
+// Sparkle effect function
+function createSparkles() {
+  const sparkleScreen = document.querySelector(".sparkle-screen");
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2;
+  for (let i = 0; i < 5; i++) {
+    let sparkle = document.createElement("span");
+    sparkle.innerHTML = `<img src="assets/star${
+      Math.floor(Math.random() * 2) + 1
+    }.webp" alt="sparkle">`;
+    sparkle.classList.add("sparkle");
+    sparkleScreen.appendChild(sparkle);
+
+    // Random position
+    let x = centerX + (Math.random() - 0.5) * (window.innerWidth * 0.6);
+    let y = centerY + (Math.random() - 0.5) * (window.innerHeight * 0.6);
+
+    sparkle.style.left = `${x}px`;
+    sparkle.style.top = `${y}px`;
+
+    // Animate movement
+    let moveX = (Math.random() - 0.5) * 150;
+    let moveY = (Math.random() - 0.5) * 150;
+
+    sparkle.animate([
+      { transform: "translate(0, 0)", opacity: 1 },
+      { transform: `translate(${moveX}px, ${moveY}px)`, opacity: 0 },
+    ]);
+
+    if (!document.querySelector(".sparkle-bg")) {
+      let sparkleBg = document.createElement("span");
+      sparkleBg.innerHTML = `<img class="one" src="assets/sparkle.png" alt="sparkle">
+                            <img class="two" src="assets/sparkle.png" alt="sparkle">`;
+      sparkleBg.classList.add("sparkle-bg");
+      sparkleScreen.appendChild(sparkleBg);
+
+      setTimeout(() => sparkleBg.remove(), 5000);
+    }
+
+    // Remove after animation
+    setTimeout(() => sparkle.remove(), 5000);
+  }
+}
+
 // Shuffle
 document.getElementById("shuffle").addEventListener("click", () => {
+  document
+    .querySelectorAll(".word-assembly .slot .letter-wrapper")
+    .forEach((slot) => {
+      slot.remove();
+    });
   displayLetters();
+  updatePlayerScore(0);
 });
+
+// Hint
+document.getElementById("hint").addEventListener("click", () => {
+  if (window.game.bestWord.length > window.user.hintsCount) {
+    addHint(window.user.hintsCount);
+    window.user.hintsCount++;
+    updateHintsUse(window.user.hintsCount);
+  }
+});
+
+function updateHintsUse(hintsCount) {
+  if (window.user.guest) {
+    // GUest User
+    localStorage.setItem(
+      "letterleyGuest",
+      JSON.stringify({
+        hints: hintsCount,
+      })
+    );
+  } else {
+    // Logged in User
+    console.log("logged");
+  }
+}
+
+function addHint(index) {
+  const hint = window.game.bestWord[index];
+
+  const slot = document.querySelector(
+    `.word-assembly .slot:nth-child(${index + 1})`
+  );
+
+  slot.setAttribute("data-hint", hint);
+  slot.classList.add("has-hint");
+}

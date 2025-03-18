@@ -158,7 +158,16 @@ main {
   background-color: #fff;
 }
 
-.word-assembly .slot[boosted]::before {
+.word-assembly .slot.has-hint::before {
+  content: attr(data-hint);
+  position: absolute;
+  top: -24px;
+  left: 0;
+  right: 0;
+  color: #dfb1cf;
+}
+
+.word-assembly .slot[boosted]::after {
   content: "Ly";
   position: absolute;
   left: 0;
@@ -189,6 +198,7 @@ main {
   color: #fff;
   border-radius: 6px;
   cursor: grab;
+  z-index: 1;
 }
 
 .letter-wrapper:active {
@@ -212,7 +222,7 @@ main {
 .touch-dragging {
   opacity: 0.5;
   position: absolute;
-  transform: scale(1.05);
+  transform: scale(1.25);
   display: flex !important;
   flex-direction: column;
   align-items: center;
@@ -467,6 +477,7 @@ main {
   background-color: rgb(255 200 234 / 90%);
   padding: 10% 1.5rem 0;
   animation: fadeIn 0.5s ease-in-out;
+  z-index: 9;
 }
 
 .sparkle-screen.darker {
@@ -795,7 +806,7 @@ main {
   .slot {
     height: 80px;
   }
-  .word-assembly .slot[boosted]::before {
+  .word-assembly .slot[boosted]::after {
     font-size: 30px;
   }
   .letter-wrapper .letter {
@@ -840,8 +851,12 @@ main {
     height: 60px;
     border-width: 2px;
   }
-  .word-assembly .slot[boosted]::before {
+  .word-assembly .slot[boosted]::after {
     font-size: 24px;
+  }
+  .word-assembly .slot[data-hint]::before {
+    top: -20px;
+    font-size: 14px;
   }
   .letter-wrapper .letter {
     font-size: 38px;
@@ -893,8 +908,11 @@ main {
   .slot {
     height: 50px;
   }
-  .word-assembly .slot[boosted]::before {
+  .word-assembly .slot[boosted]::after {
     font-size: 20px;
+  }
+  .word-assembly .slot[data-hint]::before {
+    font-size: 12px;
   }
   .letter-wrapper .letter {
     font-size: 32px;

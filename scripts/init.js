@@ -17,13 +17,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         startedAt: result.started_at,
       };
 
-      window.user = result.user || { guest: true };
+      window.user = result.user || { guest: true, hintsCount: 0 };
 
-      if (!result.user && checkGuestWinStatus(game.startedAt)) {
+      if (!result.user && checkGuestUser(game.startedAt)) {
         return;
       } else if (result.user.win > 0) {
-        displayHintsUsed();
-
+        displayPlayerStates();
         return;
       }
 
@@ -44,14 +43,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelector(".loading-screen").style.display = "none";
 });
 
-// Process Hints Used
-function displayHintsUsed() {}
-
 // Guest Win Status
-function checkGuestWinStatus(gameStarted) {
+function checkGuestUser(gameStarted) {
   let guestData = localStorage.getItem("letterleyGuest");
 
   if (!guestData) {
+    localStorage.setItem(
+      "letterleyGuest",
+      JSON.stringify({
+        started: new Date(),
+      })
+    );
     return false;
   }
 
@@ -59,6 +61,12 @@ function checkGuestWinStatus(gameStarted) {
 
   if (guest.started < gameStarted) {
     localStorage.removeItem("letterleyGuest");
+    localStorage.setItem(
+      "letterleyGuest",
+      JSON.stringify({
+        started: new Date(),
+      })
+    );
     return false;
   }
 
@@ -77,9 +85,16 @@ function checkGuestWinStatus(gameStarted) {
 
     // guest won, no need to initialize the game
     return true;
+  } else {
+    console.log(guest);
+    for (let i = 0; i < guest.hints; i++) {}
   }
-
   return false;
+}
+
+// Display Player States
+function displayPlayerStates() {
+  console.log("display player states");
 }
 
 // Initiate Game

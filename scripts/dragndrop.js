@@ -305,6 +305,9 @@ function handleTouchEnd(e) {
   dragSourceContainer = null;
   dragSourceSlot = null;
   dragSourceIndex = -1;
+
+  // Calculate Points on Touch Drag
+  calculatePointsAndWord();
 }
 
 // Add this function to clean up any leftover drag elements
@@ -444,6 +447,8 @@ function handleDropInWordAssembly(e) {
     }
   }
 
+  // Calculate Points on Mouse Drag
+  calculatePointsAndWord();
   return false;
 }
 
@@ -478,6 +483,9 @@ function handleLetterSwap(targetSlot) {
     // Ensure proper organization
     reorganizeWordAssembly();
   }
+
+  // Recalculate after swap
+  calculatePointsAndWord();
 }
 
 // Handle drop in letter generator
@@ -502,6 +510,8 @@ function handleDropInLetterGenerator(e) {
     }
   }
 
+  // Calculate Points on Mouse Drag
+  calculatePointsAndWord();
   return false;
 }
 
