@@ -74,7 +74,7 @@ require_once 'admin/session.php';
                 <span class="count">92</span>
                 <span class="count-type">Win %</span>
               </div>
-              <div class="streak-count count-wrapper">
+              <div class="current-streak count-wrapper">
                 <span class="count">4</span>
                 <span class="count-type">Current Streak</span>
               </div>
@@ -88,43 +88,43 @@ require_once 'admin/session.php';
               <ul>
                 <li>
                   <span class="hints-number">0</span>
-                  <span class="hints-bar" data-hints-used="16">
+                  <span class="hints-bar" hint-count="0" data-hints-used="0">
                     <span class="bar"></span>
                   </span>
                 </li>
-                <li class="active">
+                <li>
                   <span class="hints-number">1</span>
-                  <span class="hints-bar" data-hints-used="22">
+                  <span class="hints-bar" hint-count="1" data-hints-used="0">
                     <span class="bar"></span>
                   </span>
                 </li>
                 <li>
                   <span class="hints-number">2</span>
-                  <span class="hints-bar" data-hints-used="12">
+                  <span class="hints-bar" hint-count="2" data-hints-used="0">
                     <span class="bar"></span>
                   </span>
                 </li>
                 <li>
                   <span class="hints-number">3</span>
-                  <span class="hints-bar" data-hints-used="4">
+                  <span class="hints-bar" hint-count="3" data-hints-used="0">
                     <span class="bar"></span>
                   </span>
                 </li>
                 <li>
                   <span class="hints-number">4</span>
-                  <span class="hints-bar" data-hints-used="2">
+                  <span class="hints-bar" hint-count="4" data-hints-used="0">
                     <span class="bar"></span>
                   </span>
                 </li>
                 <li>
                   <span class="hints-number">5</span>
-                  <span class="hints-bar" data-hints-used="0">
+                  <span class="hints-bar" hint-count="5" data-hints-used="0">
                     <span class="bar"></span>
                   </span>
                 </li>
                 <li>
                   <span class="hints-number">6</span>
-                  <span class="hints-bar" data-hints-used="0">
+                  <span class="hints-bar" hint-count="6" data-hints-used="0">
                     <span class="bar"></span>
                   </span>
                 </li>

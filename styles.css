@@ -344,6 +344,14 @@ main {
   margin: 1.5rem 0;
 }
 
+.guest-win {
+  padding: 40px 0 80px;
+}
+
+.guest-win.headline h3 {
+  color: #000;
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -359,6 +367,7 @@ main {
 .modal .container {
   width: 400px;
   max-width: 100%;
+  padding: 30px;
   background-color: #fff;
   border-radius: 10px;
 }
@@ -620,7 +629,7 @@ main {
 }
 
 .btn-save {
-  background-color: #fff;
+  background-color: #dfb1cf;
   padding: 0.8rem 1.5rem;
   display: inline-block;
   cursor: pointer;
@@ -733,8 +742,10 @@ main {
 
 .hints-bar .bar {
   height: 100%;
+  width: 0;
   min-width: 10px;
   background-color: #000;
+  transition: all 1.5s ease-in;
 }
 
 .hints-bar::after {
@@ -745,6 +756,15 @@ main {
 
 .active .hints-bar .bar {
   background-color: #dfb1cf;
+}
+
+.btn-progress {
+  background-color: #dfb1cf;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 20px;
+  display: inline-block;
+  text-transform: uppercase;
 }
 
 @media screen and (max-width: 1200px) {

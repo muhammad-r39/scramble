@@ -143,36 +143,69 @@ function sparkle() {
     </div>
   `;
   } else {
-    win.classList.add("darker");
+    // display player states
     win.innerHTML = `
-            <div class="headline">
-              <h2>🎉 Congratulations! 🎉</h2>
-              <h3>You have won! You beat the game in: ${beatTime}</h3>
-              <p>Please wait for next round to start!</p>
-              <span class="btn btn-leaderboard" onclick="location.reload()">See Leaderboard</span>
-            </div>
-          `;
+    <div class="sparkle-container">
+      <h2>🎉 Congratulations! 🎉</h2>
+      <h3>You have found today's highest point word.</h3>
+      <span class="btn-link btn-progress">See Progress</span>
+    </div>
+  `;
   }
   document.querySelector("body").appendChild(win);
 
   document.querySelectorAll(".btn-register").forEach((btn) => {
-    // btn.addEventListener("click", () => {
-    //   if (registerModal) {
-    //     registerModal.style.display = "block";
-    //   }
-    // });
+    btn.addEventListener("click", () => {
+      if (registerModal) {
+        registerModal.style.display = "block";
+      }
+    });
+  });
+
+  document.querySelector(".btn-progress").addEventListener("click", () => {
+    document.querySelector(".sparkle-screen").remove();
+    location.reload();
+    // displayPlayerStates();
   });
 
   // Add sparkle effect
   createSparkles();
-  /*
+
   if (window.user.guest) {
-    console.log("guest");
-    processGuestWin(beatTime);
+    processGuestWin();
   } else {
-    processLoggedUser(beatTime);
+    processLoggedUserWin();
   }
-  */
+}
+
+function processGuestWin() {
+  let guestData = localStorage.getItem("letterleyGuest");
+  let guestObj = {};
+
+  if (guestData) {
+    guestObj = JSON.parse(guestData);
+  }
+
+  guestObj.won = true;
+
+  localStorage.setItem("letterleyGuest", JSON.stringify(guestObj));
+}
+
+async function processLoggedUserWin() {
+  const data = {
+    action: "updatePlayerWin",
+  };
+  const response = await fetch("admin/update.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (result.success) {
+    console.log(result);
+  }
 }
 
 // Sparkle effect function
@@ -232,25 +265,49 @@ document.getElementById("shuffle").addEventListener("click", () => {
 
 // Hint
 document.getElementById("hint").addEventListener("click", () => {
-  if (window.game.bestWord.length > window.user.hintsCount) {
-    addHint(window.user.hintsCount);
-    window.user.hintsCount++;
-    updateHintsUse(window.user.hintsCount);
+  if (window.game.bestWord.length > window.user.hintsUsed) {
+    updateHintsUse();
+    addHint(window.user.hintsUsed);
+    window.user.hintsUsed++;
   }
 });
 
-function updateHintsUse(hintsCount) {
+async function updateHintsUse() {
   if (window.user.guest) {
-    // GUest User
-    localStorage.setItem(
-      "letterleyGuest",
-      JSON.stringify({
-        hints: hintsCount,
-      })
-    );
+    // Guest User
+    let guestData = localStorage.getItem("letterleyGuest");
+    let guestObj = {};
+
+    if (guestData) {
+      guestObj = JSON.parse(guestData);
+    }
+
+    if (guestObj.hintsUsed < window.game.bestWord.length) {
+      guestObj.hintsUsed++;
+    }
+
+    // Save the updated object back to localStorage
+    localStorage.setItem("letterleyGuest", JSON.stringify(guestObj));
   } else {
     // Logged in User
-    console.log("logged");
+    await processLoggedUserHintUse();
+  }
+}
+
+async function processLoggedUserHintUse() {
+  const data = {
+    action: "updatePlayerHintUse",
+  };
+  const response = await fetch("admin/update.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (result.success) {
+    console.log(result);
   }
 }
 

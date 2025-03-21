@@ -87,7 +87,7 @@ $maxAttempts = 10; // Prevent infinite loops
 do {
   $letters = getRandomLetters();
   $boostSlot = rand(1, 7);
-  $boostMultiplier = (rand(0, 1) == 0) ? 2 : 3;
+  $boostMultiplier = (rand(0, 1) == 0) ? 3 : 3;
 
   if (!isset($words) || !is_array($words)) {
     die("Error: Word list not found.");
@@ -104,8 +104,26 @@ if ($result['success'] && strlen($result['bestWord']) >= 3) {
 
   try {
     $pdo->beginTransaction();
-    $pdo->exec("DELETE FROM leaderboard");
-    $pdo->exec("UPDATE users SET win = 0");
+
+    // First, update the hint counters based on last_hint values
+    $stmt = $pdo->prepare("
+        UPDATE users
+        SET
+            hint_0 = CASE WHEN last_hint = 0 THEN hint_0 + 1 ELSE hint_0 END,
+            hint_1 = CASE WHEN last_hint = 1 THEN hint_1 + 1 ELSE hint_1 END,
+            hint_2 = CASE WHEN last_hint = 2 THEN hint_2 + 1 ELSE hint_2 END,
+            hint_3 = CASE WHEN last_hint = 3 THEN hint_3 + 1 ELSE hint_3 END,
+            hint_4 = CASE WHEN last_hint = 4 THEN hint_4 + 1 ELSE hint_4 END,
+            hint_5 = CASE WHEN last_hint = 5 THEN hint_5 + 1 ELSE hint_5 END,
+            hint_6 = CASE WHEN last_hint = 6 THEN hint_6 + 1 ELSE hint_6 END
+        WHERE
+            last_hint > 0
+    ");
+    $stmt->execute();
+
+    // Then reset win and last_hint for all users
+    $pdo->exec("UPDATE users SET win = 0, last_hint = 0");
+
     $pdo->commit();
   } catch (PDOException $e) {
     $pdo->rollBack();

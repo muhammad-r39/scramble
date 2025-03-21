@@ -11,11 +11,8 @@ if ($data['action'] == 'login') {
   $password = $data['password'];
 
   $guest = $data['guestPlayer'];
-  // $guestStartedAt = isset($guest['playerStartedAt']) ? $guest['playerStartedAt'] : NULL;
-  // $utcTime = date('Y-m-d H:i:s', strtotime($guestStartedAt));
   $guestWin = isset($guest['playerWon']) ? $guest['playerWon'] : 0;
-  $guestScore = isset($guest['playerScore']) ? $guest['playerScore'] : 0;
-  $guestBeatTime = isset($guest['playerBeatTime']) ? $guest['playerBeatTime'] : '';
+  $hintsUsed = isset($guest['hintsUsed']) ? $guest['hintsUsed'] : 0;
 
   // Validate email and password
   if (empty($email) || empty($password)) {
@@ -41,44 +38,32 @@ if ($data['action'] == 'login') {
     // Invalid credentials
     $result['message'] = 'Invalid email or password.';
   }
-  /*
-  if (isset($result['user'])) {
-    // Update User table
-    $stmt = $pdo->prepare("UPDATE users SET last_active = :last_active WHERE id = :user_id");
-    $stmt->execute(['user_id' => $result['user']['id'], 'last_active' => $utcTime]);
-
-    if ($stmt->rowCount() > 0) {
-      $result['success'] = true;
-      $result['message'] = 'Login successful.';
-    } else {
-      $result['message'] = 'Failed to Update User.';
-    }
-  }*/
 
   if ($guestWin > 0 && isset($result['user'])) {
-    $stmt = $pdo->prepare("UPDATE users SET win = 1, beat_time = :beat_time WHERE id = :user_id");
-    $stmt->execute(['user_id' => $result['user']['id'], 'beat_time' => $guestBeatTime]);
+    $currentStreak = $userData['current_streak'];
+    $newStreak = $currentStreak + 1;
+    $hintColumn = "hint_" . $hintsUsed;
+
+    $stmt = $pdo->prepare("UPDATE users SET
+                            win = 1,
+                            last_hint = :hintsUsed,
+                            $hintColumn = $hintColumn + 1,
+                            total_played = total_played + 1,
+                            total_win = total_win + 1,
+                            current_streak = :new_streak,
+                            max_streak = GREATEST(max_streak, :new_streak)
+                            WHERE id = :user_id");
+
+    $stmt->bindParam(':hintsUsed', $hintsUsed, PDO::PARAM_INT);
+    $stmt->bindParam(':user_id', $result['user']['id'], PDO::PARAM_INT);
+    $stmt->bindParam(':new_streak', $newStreak, PDO::PARAM_INT);
+    $stmt->execute();
+
     if ($stmt->rowCount() > 0) {
       $result['success'] = true;
-      $result['message'] = 'Login successful.';
+      $result['message'] = 'Login successful and progress saved.';
     } else {
-      $result['message'] = 'Failed to Update User.';
-    }
-
-    // Insert into Leaderboard
-    $stmt = $pdo->prepare("INSERT INTO leaderboard (fullname, score, time_taken, date) VALUES (:fullname, :score, :timeTaken, NOW())");
-
-    $stmt->execute([
-      'fullname' => $result['user']['first_name'] . ' ' . $result['user']['last_name'],
-      'score' => $guestScore,
-      'timeTaken' => $guestBeatTime
-    ]);
-
-    if ($stmt->rowCount() > 0) {
-      $result['success'] = true;
-      $result['message'] = 'Leaderboard Updated.';
-    } else {
-      $result['message'] = 'Failed to Update Leaderboard.';
+      $result['message'] = 'Login Success but Failed to Update User.';
     }
   }
 

@@ -7,13 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // check current user state
       const guestPlayer = {};
-      let guestData = localStorage.getItem("guestGameData");
+      let guestData = localStorage.getItem("letterleyGuest");
 
       if (guestData) {
         guestData = JSON.parse(guestData);
-        guestPlayer.playerWon = guestData.beatTime ? 1 : 0;
-        guestPlayer.playerScore = guestData.score || 0;
-        guestPlayer.playerBeatTime = guestData.beatTime || "";
+        guestPlayer.playerWon = guestData.won ? 1 : 0;
+        guestPlayer.hintsUsed = guestData.hintsUsed || 0;
       }
 
       // Clear previous error messages
@@ -99,6 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 registerModal.style.display = "none";
               }
             }, 1300);
+            localStorage.removeItem("letterleyGuest");
           } else {
             displayError(
               "reEnterPassword",
@@ -121,13 +121,12 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("click", (e) => {
       e.preventDefault(); // check current user state
       const guestPlayer = {};
-      let guestData = localStorage.getItem("guestGameData");
+      let guestData = localStorage.getItem("letterleyGuest");
 
       if (guestData) {
         guestData = JSON.parse(guestData);
-        guestPlayer.playerWon = guestData.beatTime ? 1 : 0;
-        guestPlayer.playerScore = guestData.score || 0;
-        guestPlayer.playerBeatTime = guestData.beatTime || "";
+        guestPlayer.playerWon = guestData.won ? 1 : 0;
+        guestPlayer.hintsUsed = guestData.hintsUsed || 0;
       }
 
       // Clear previous error messages
