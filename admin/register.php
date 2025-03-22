@@ -10,6 +10,7 @@ if ($data['action'] == 'register') {
   $lastName = trim($data['lastName']);
   $email = trim($data['email']);
   $password = trim($data['password']);
+  $gameId = isset($data['gameId']) ? trim($data['gameId']) : 0;
 
   $guest = $data['guestPlayer'];
   error_log(implode(', ', $guest));
@@ -39,11 +40,11 @@ if ($data['action'] == 'register') {
 
   // Insert the new user into the database
   $stmt = $pdo->prepare("INSERT INTO users (
-                          first_name, last_name, email, password, created_at, win, last_hint,
-                          total_played, total_win, current_streak, max_streak, $hintColumn)
+                          first_name, last_name, email, password, created_at, win, last_hint, $hintColumn,
+                          total_played, total_win, current_streak, max_streak, last_game)
                         VALUES (
-                          :first_name, :last_name, :email, :password, NOW(), :win, :hintsUsed,
-                          :total_played, :total_win, :current_streak, :max_streak, 1)");
+                          :first_name, :last_name, :email, :password, NOW(), :win, :hintsUsed, 1,
+                          :total_played, :total_win, :current_streak, :max_streak, :last_game)");
 
   $stmt->bindParam(':first_name', $firstName);
   $stmt->bindParam(':last_name', $lastName);
@@ -61,6 +62,7 @@ if ($data['action'] == 'register') {
   $stmt->bindParam(':total_win', $totalWin, PDO::PARAM_INT);
   $stmt->bindParam(':current_streak', $currentStreak, PDO::PARAM_INT);
   $stmt->bindParam(':max_streak', $maxStreak, PDO::PARAM_INT);
+  $stmt->bindParam(':last_game', $gameId, PDO::PARAM_INT);
 
   if ($stmt->execute()) {
     $result['success'] = true;
@@ -68,25 +70,7 @@ if ($data['action'] == 'register') {
   } else {
     $result['message'] = 'Registration failed. Please try again later.';
   }
-/*
-  if ($guestWin > 0) {
-    // Insert into Leaderboard
-    $stmt = $pdo->prepare("INSERT INTO leaderboard (fullname, score, time_taken, date) VALUES (:fullname, :score, :timeTaken, NOW())");
 
-    $stmt->execute([
-      'fullname' => $firstName . ' ' . $lastName,
-      'score' => $guestScore,
-      'timeTaken' => $guestBeatTime
-    ]);
-
-    if ($stmt->rowCount() > 0) {
-      $result['success'] = true;
-      $result['message'] = 'Leaderboard Updated.';
-    } else {
-      $result['message'] = 'Failed to Update Leaderboard.';
-    }
-  }
-*/
 }
 
 echo json_encode($result);

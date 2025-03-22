@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (!isValid) return;
-
       // Prepare registration data
       const data = {
         action: "register",
@@ -73,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
         email: email,
         password: password,
         guestPlayer: guestPlayer,
+        gameId: window.game.gameId,
       };
 
       // Send registration data to the backend
@@ -119,7 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .querySelector("#loginForm #loginSubmit")
     .addEventListener("click", (e) => {
-      e.preventDefault(); // check current user state
+      e.preventDefault();
+
       const guestPlayer = {};
       let guestData = localStorage.getItem("letterleyGuest");
 
@@ -161,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         email: email,
         password: password,
         guestPlayer: guestPlayer,
+        gameId: window.game.gameId,
       };
 
       fetch("admin/login.php", {

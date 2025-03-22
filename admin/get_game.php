@@ -46,6 +46,7 @@ echo json_encode([
     "best_word" => $game["best_word"],
     "boost_slot" => $game["boost_slot"],
     "points" => LETTER_POINTS,
+    "game_id" => $current_game_id,
     "started_at" => $game['created_at'],
     "user" => $user,
 ]);

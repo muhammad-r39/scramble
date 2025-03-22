@@ -162,10 +162,12 @@ function sparkle() {
     });
   });
 
-  document.querySelector(".btn-progress").addEventListener("click", () => {
-    document.querySelector(".sparkle-screen").remove();
-    location.reload();
-    // displayPlayerStates();
+  document.querySelectorAll(".btn-progress").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelector(".sparkle-screen").remove();
+      location.reload();
+      // displayPlayerStates();
+    });
   });
 
   // Add sparkle effect

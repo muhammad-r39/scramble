@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         letters: result.letters,
         points: result.points,
         startedAt: result.started_at,
+        gameId: result.game_id,
       };
       window.game = game;
 
@@ -116,11 +117,15 @@ function checkGuestUser(gameStarted) {
 function displayPlayerStates() {
   document.querySelector("#game").style.display = "none";
   document.querySelector("#gameScore").style.display = "block";
+  const winRate = (window.user.total_win / window.user.total_played) * 100;
+  const formattedRate = Number.isInteger(winRate)
+    ? winRate.toString()
+    : winRate.toFixed(2);
+  formattedRate + "%";
 
   document.querySelector(".played-count .count").textContent =
     window.user.total_played;
-  document.querySelector(".win-count .count").textContent =
-    ((window.user.total_win / window.user.total_played) * 100).toFixed(2) + "%";
+  document.querySelector(".win-count .count").textContent = formattedRate;
   document.querySelector(".current-streak .count").textContent =
     window.user.current_streak;
   document.querySelector(".max-streak .count").textContent =

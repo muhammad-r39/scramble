@@ -9,6 +9,7 @@ $result = ['success' => false, 'message' => 'Something went wrong!'];
 if ($data['action'] == 'login') {
   $email = $data['email'];
   $password = $data['password'];
+  $gameId = isset($data['gameId']) ? trim($data['gameId']) : 0;
 
   $guest = $data['guestPlayer'];
   $guestWin = isset($guest['playerWon']) ? $guest['playerWon'] : 0;
@@ -40,7 +41,8 @@ if ($data['action'] == 'login') {
   }
 
   if ($guestWin > 0 && isset($result['user'])) {
-    $currentStreak = $userData['current_streak'];
+    $lastGame = $result['user']['last_game'];
+    $currentStreak = $gameId === ($lastGame + 1) || $gameId === $lastGame ? $result['user']['current_streak'] : 0;
     $newStreak = $currentStreak + 1;
     $hintColumn = "hint_" . $hintsUsed;
 
@@ -51,12 +53,14 @@ if ($data['action'] == 'login') {
                             total_played = total_played + 1,
                             total_win = total_win + 1,
                             current_streak = :new_streak,
-                            max_streak = GREATEST(max_streak, :new_streak)
+                            max_streak = GREATEST(max_streak, :new_streak),
+                            last_game = :last_game
                             WHERE id = :user_id");
 
     $stmt->bindParam(':hintsUsed', $hintsUsed, PDO::PARAM_INT);
     $stmt->bindParam(':user_id', $result['user']['id'], PDO::PARAM_INT);
     $stmt->bindParam(':new_streak', $newStreak, PDO::PARAM_INT);
+    $stmt->bindParam(':last_game', $gameId, PDO::PARAM_INT);
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
